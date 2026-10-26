@@ -118,8 +118,8 @@ function openAuth(mode='signin'){
  else {document.getElementById('modalContent').innerHTML=`<h2>Welcome to TEMO EXCHANGE</h2><p>Register or sign in to publish listings to the shared marketplace.</p><div class="field"><label>Full name / business name</label><input id="authName" autocomplete="name" placeholder="Your name or business" /></div><div class="field" style="margin-top:12px"><label>Email address</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com" /></div><div class="field" style="margin-top:12px"><label>Password (at least 6 characters)</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Enter password" /></div><div id="authMessage" class="notice" role="status">Email confirmation may be required before you can sign in.</div><div class="two-col"><button class="primary" onclick="signInUser()">Sign in</button><button class="secondary" onclick="registerUser()">Create account</button></div>`;}
  document.getElementById('modalBack').classList.add('show');
 }
-function isAdmin(){return String(userProfile?.app_role||userProfile?.role||'').toLowerCase()==='admin';}
-function updateAdminAccess(){document.querySelectorAll('[data-page="admin"]').forEach(el=>el.style.display=isAdmin()?'flex':'none');}
+function isAdmin(){return [userProfile?.app_role,userProfile?.role].some(v=>String(v||'').trim().toLowerCase()==='admin');}
+function updateAdminAccess(){document.querySelectorAll('[data-page="admin"]').forEach(el=>el.style.display=currentUser?'flex':'none');}
 function updateAuthUI(){
  const b=document.getElementById('authButton'),a=document.getElementById('userAvatar');
  const mobileLabel=document.getElementById('mobileAuthLabel'),mobileButton=document.getElementById('mobileAuthButton');
