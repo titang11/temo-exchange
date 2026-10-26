@@ -70,6 +70,7 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
 #page-staff-messages select[multiple]{height:auto}
 @media(max-width:720px){#page-staff-messages .two-col,#page-network .two-col{grid-template-columns:1fr}.quick-menu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
+.profile-accordion{border:1px solid var(--line);border-radius:13px;margin:18px 0;background:rgba(255,255,255,.45);overflow:hidden}.profile-accordion summary{cursor:pointer;list-style:none;padding:14px 15px;font-size:12px;font-weight:850;color:var(--green);display:flex;align-items:center;justify-content:space-between}.profile-accordion summary::-webkit-details-marker{display:none}.profile-accordion summary:after{content:'＋';font-size:17px}.profile-accordion[open] summary:after{content:'−'}.profile-accordion-body{padding:0 15px 15px}
 </style>
 </head>
 <body>
@@ -288,7 +289,7 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
   </form>
   <div class="panel" style="padding:14px;margin-top:14px;background:rgba(255,255,255,.45)"><div class="row"><span class="smallmuted">Latest request</span><span class="status pending" id="profileRequestStatus">No request yet</span></div><p id="profileRequestDetails" class="smallmuted" style="margin-bottom:0">Submit the form to begin account verification.</p></div>
   <button id="requestProfileReviewButton" class="secondary" style="display:none;margin-top:12px" onclick="requestProfileReview()">Request review of changed details</button>
-  <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+  <details class="profile-accordion"><summary>Request additional business capabilities</summary><div class="profile-accordion-body">
   <h3 style="color:var(--green);font-size:16px;margin:0 0 6px">Request additional capabilities</h3>
   <p class="smallmuted">One account can request several business capabilities. New capabilities remain pending until an authorised reviewer approves them.</p>
   <div class="formgrid" id="capabilityChoices">
@@ -302,8 +303,8 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
     <label><input type="checkbox" value="agricultural_organisation"> Agricultural organisation</label>
   </div>
   <button class="secondary" style="margin-top:12px" onclick="requestCapabilities()">Submit capability requests</button>
-  <div id="capabilityRequestMessage" class="smallmuted" style="margin-top:8px"></div><div class="row" style="margin-top:15px"><span class="smallmuted">Phone</span><b style="font-size:12px;text-align:right;max-width:62%" id="profilePhone">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Address / location</span><b style="font-size:12px;text-align:right;max-width:62%" id="profileLocation">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Member since</span><b style="font-size:12px" id="profileSince">—</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Listings created</span><b style="font-size:12px" id="profileListings">0</b></div>
-  <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+  <div id="capabilityRequestMessage" class="smallmuted" style="margin-top:8px"></div></div></details><div class="row" style="margin-top:15px"><span class="smallmuted">Phone</span><b style="font-size:12px;text-align:right;max-width:62%" id="profilePhone">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Address / location</span><b style="font-size:12px;text-align:right;max-width:62%" id="profileLocation">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Member since</span><b style="font-size:12px" id="profileSince">—</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Listings created</span><b style="font-size:12px" id="profileListings">0</b></div>
+  <details class="profile-accordion"><summary>WhatsApp contact preferences</summary><div class="profile-accordion-body">
   <h3 style="color:var(--green);font-size:16px;margin:0 0 6px">WhatsApp contact preferences</h3>
   <p class="smallmuted">Add a WhatsApp number and choose whether matched members may see it. Sharing is off by default.</p>
   <form id="whatsappProfileForm" onsubmit="saveWhatsAppProfile(event)">
@@ -312,7 +313,7 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
     <p class="smallmuted">Only members who opted into community matching can receive this number in their match results. You can turn this off at any time.</p>
     <button class="primary" type="submit" style="margin-top:8px">Save WhatsApp settings</button>
     <div id="whatsappProfileMessage" class="smallmuted" role="status" style="margin-top:8px"></div>
-  </form>
+  </form></div></details>
   <div class="notice">Trust labels are not endorsements. Confirm identity, quantity, quality and terms before exchanging goods or money.</div></div><div class="panel"><h2 style="color:var(--green);font-size:18px;margin-top:0">Your business checklist</h2><p class="smallmuted">Before a commercial launch, the product will need:</p><div class="tradecard"><h3>Account security</h3><p>Secure sign-in, recovery and role-based access.</p></div><div class="tradecard"><h3>Asset verification</h3><p>Evidence, field checks, review decisions and an audit trail.</p></div><div class="tradecard"><h3>Safe trading process</h3><p>Clear terms, dispute handling and approved payment/escrow partners if enabled.</p></div></div></div>
 </section>
 <section class="page" id="page-account-review">
@@ -596,8 +597,8 @@ async function loadFinance(){
  ]);
  if(sales.error||expenses.error){showToast('Could not load some financial records. Check your database permissions.');return;}
  const sr=sales.data||[],er=expenses.data||[];reportSalesCache=sr;reportExpenseCache=er;
- const cash=sr.reduce((a,x)=>a+Number(x.cash_received||0),0),barter=sr.reduce((a,x)=>a+Number(x.barter_value||0),0),goods=sr.reduce((a,x)=>a+Number(x.cost_of_goods||0),0),extraSales=sr.reduce((a,x)=>a+Number(x.additional_expenses||0),0),extra=er.reduce((a,x)=>a+Number(x.amount||0),0);
- document.getElementById('financeCash').textContent=money(cash);document.getElementById('financeBarter').textContent=money(barter);document.getElementById('financeExpenses').textContent=money(goods+extraSales+extra);document.getElementById('financeProfit').textContent=money(cash+barter-goods-extraSales-extra);
+ const cash=sr.reduce((a,x)=>a+Number(x.cash_received||0),0),cashDue=sr.reduce((a,x)=>a+Math.max(0,Number(x.cash_due||0)-Number(x.cash_received||0)),0),barter=sr.reduce((a,x)=>a+Number(x.barter_value||0),0),goods=sr.reduce((a,x)=>a+Number(x.cost_of_goods||0),0),extraSales=sr.reduce((a,x)=>a+Number(x.additional_expenses||0),0),extra=er.reduce((a,x)=>a+Number(x.amount||0),0);
+ document.getElementById('financeCash').textContent=money(cash);const dueEl=document.getElementById('financeCashDue');if(dueEl)dueEl.textContent=money(cashDue);document.getElementById('financeBarter').textContent=money(barter);document.getElementById('financeExpenses').textContent=money(goods+extraSales+extra);document.getElementById('financeProfit').textContent=money(cash+barter-goods-extraSales-extra);
  document.getElementById('salesLedgerList').innerHTML=sr.length?sr.map(x=>{const li=listingByDbId(x.listing_id);return '<div class="tradecard"><div class="row"><h3>'+esc(li?.title||'Recorded sale')+'</h3><span class="status verified">'+esc(new Date(x.completed_at).toLocaleDateString())+'</span></div><p>Quantity: '+esc(x.quantity)+' · Cash: '+money(x.cash_received)+' · Barter value: '+money(x.barter_value)+' · Costs: '+money(Number(x.cost_of_goods||0)+Number(x.additional_expenses||0))+'</p><button class="secondary" onclick="deleteSale(\''+x.id+'\')">Delete record</button></div>'}).join(''):'<div class="empty">No completed sales recorded yet. Record a real completed trade above.</div>';
  document.getElementById('expenseList').innerHTML=er.length?er.map(x=>'<div class="tradecard"><div class="row"><h3>'+esc(x.description)+'</h3><b>'+money(x.amount)+'</b></div><p>'+esc(x.category)+' · '+esc(x.expense_date)+'</p><button class="secondary" onclick="deleteExpense(\''+x.id+'\')">Delete expense</button></div>').join(''):'<div class="empty">No business expenses recorded yet.</div>';
 }
