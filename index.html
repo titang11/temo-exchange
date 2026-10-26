@@ -741,14 +741,14 @@ async function loadAdminRoleManagement(){
  body.innerHTML=(data||[]).map(p=>{
   const name=esc(p.display_name||'TEMO member')+'<br><span class="smallmuted">'+esc(shortId(p.id))+'</span>';
   if(p.id===currentUser.id)return '<tr><td>'+name+' (current account)</td><td>'+esc(p.account_type)+'</td><td>'+esc(p.app_role)+'</td><td>Protected from self-change</td></tr>';
-  const options=['member','verification_agent','team_leader','admin'].map(r=>'<option value="'+r+'" '+(p.app_role===r?'selected':'')+'>'+r.replace(/_/g,' ')+'</option>').join('');
-  return '<tr><td>'+name+'</td><td>'+esc(p.account_type)+'</td><td>'+esc(p.app_role)+'</td><td><select class="select" id="system-role-'+esc(p.id)+'">'+options+'</select><button class="secondary" style="margin-top:5px" onclick="saveSystemRole(\''+p.id+'\','+admins+')">Save role</button></td></tr>';
+  const options=['member','verification_agent','team_leader','admin','account_review_agent','account_review_lead'].map(r=>'<option value="'+r+'" '+(p.app_role===r?'selected':'')+'>'+r.replace(/_/g,' ')+'</option>').join('');
+  const accountTypes=['farmer','buyer','supplier','cooperative','business','labour_provider','service_provider','transport_provider','machinery_provider','processor','packaging_provider','warehouse_provider','student_youth','government_institution','agricultural_organisation'];const typeOptions=accountTypes.map(t=>'<option value="'+t+'" '+(p.account_type===t?'selected':'')+'>'+t.replace(/_/g,' ')+'</option>').join('');return '<tr><td>'+name+'</td><td><select class="select" id="account-type-'+esc(p.id)+'">'+typeOptions+'</select><button class="secondary" style="margin-top:4px" onclick="savePrimaryAccountType(\''+p.id+'\')">Save account type</button></td><td>'+esc(p.app_role)+'</td><td><select class="select" id="system-role-'+esc(p.id)+'">'+options+'</select><button class="secondary" style="margin-top:5px" onclick="saveSystemRole(\''+p.id+'\','+admins+')">Save system role</button></td></tr>';
  }).join('')||'<tr><td colspan="4">No profiles found.</td></tr>';
 }
 async function saveSystemRole(id,adminCount){
  if(!isAdmin()||!currentUser||id===currentUser.id)return;
  const select=document.getElementById('system-role-'+id),next=select?.value;
- if(!['member','verification_agent','team_leader','admin'].includes(next)){showToast('Choose a valid system role.');return;}
+ if(!['member','verification_agent','team_leader','admin','account_review_agent','account_review_lead'].includes(next)){showToast('Choose a valid system role.');return;}
  const {data:current,error:readError}=await supabaseClient.from('profiles').select('app_role').eq('id',id).maybeSingle();
  if(readError||!current){showToast('Could not verify the current role.');return;}
  if(current.app_role==='admin'&&next!=='admin'&&Number(adminCount)<=1){showToast('Keep at least one administrator account active.');return;}
@@ -757,6 +757,100 @@ async function saveSystemRole(id,adminCount){
  showToast('System role updated.');await loadAdminRoleManagement();
 }
 
+
+
+async function savePrimaryAccountType(id){
+ if(!isAdmin()||!currentUser||!id)return;
+ const select=document.getElementById('account-type-'+id),next=select?.value;
+ const allowed=['farmer','buyer','supplier','cooperative','business','labour_provider','service_provider','transport_provider','machinery_provider','processor','packaging_provider','warehouse_provider','student_youth','government_institution','agricultural_organisation'];
+ if(!allowed.includes(next)){showToast('Choose a valid account type.');return;}
+ const {error}=await supabaseClient.from('profiles').update({account_type:next}).eq('id',id);
+ if(error){showToast('Account type update failed: '+error.message);return;}
+ showToast('Primary account type assigned.');await loadAdminRoleManagement();
+}
+async function submitAccountVerification(event){
+ event.preventDefault();
+ const out=document.getElementById('profileVerificationMessage');
+ if(!currentUser||!supabaseClient){if(out)out.textContent='Sign in before submitting an account request.';return;}
+ if(!currentUser.email_confirmed_at){if(out)out.textContent='Please confirm your email address first, then sign in again and submit your request.';return;}
+ const payload={
+  p_request_type:document.getElementById('kycRequestType').value,
+  p_legal_name:document.getElementById('kycLegalName').value.trim(),
+  p_phone:document.getElementById('kycPhone').value.trim(),
+  p_address:document.getElementById('kycAddress').value.trim(),
+  p_organisation_name:document.getElementById('kycOrganisation').value.trim(),
+  p_evidence_summary:document.getElementById('kycEvidenceSummary').value.trim()
+ };
+ if(!payload.p_legal_name||!payload.p_address){if(out)out.textContent='Enter your full legal name and address.';return;}
+ if(out)out.textContent='Submitting your request…';
+ const {data,error}=await supabaseClient.rpc('request_account_verification',payload);
+ if(error){if(out)out.textContent=error.message.includes('already have')?'You already have a request in progress. Check the status below.':'Could not submit request: '+error.message;return;}
+ if(out)out.textContent='Request submitted. Your account remains unverified until an authorised reviewer completes the checks.';
+ showToast('Account verification request submitted.');
+ await loadProfile();
+}
+async function loadMyAccountVerificationRequest(){
+ if(!currentUser||!supabaseClient)return;
+ const {data,error}=await supabaseClient.from('account_verification_requests').select('id,request_type,status,created_at,updated_at,reviewer_notes').eq('profile_id',currentUser.id).order('created_at',{ascending:false}).limit(1).maybeSingle();
+ const badge=document.getElementById('profileRequestStatus'),details=document.getElementById('profileRequestDetails'),form=document.getElementById('accountVerificationForm');
+ if(error){if(details)details.textContent='Could not load request status: '+error.message;return;}
+ if(!data){if(badge){badge.textContent='No request yet';badge.className='status pending';}if(details)details.textContent='Submit the form to begin account verification.';return;}
+ const status=data.status||'pending';
+ if(badge){badge.textContent=status.replace(/_/g,' ');badge.className='status '+(status==='approved'?'verified':status==='rejected'?'rejected':'pending');}
+ if(details)details.textContent='Submitted '+new Date(data.created_at).toLocaleDateString()+(data.reviewer_notes?' · Reviewer note: '+data.reviewer_notes:'');
+ if(form){const btn=form.querySelector('button[type="submit"]');if(btn){btn.disabled=['pending','in_review','needs_information','approved'].includes(status);btn.textContent=status==='approved'?'Account verified':btn.disabled?'Request already submitted':'Submit account verification request';}}
+}
+async function loadAccountReviewWorkspace(){
+ const body=document.getElementById('accountReviewRows');if(!body||!supabaseClient||!currentUser)return;
+ if(!canOpenAccountReview()){body.innerHTML='<tr><td colspan="6">Account-review team access required.</td></tr>';return;}
+ body.innerHTML='<tr><td colspan="6">Loading account applications…</td></tr>';
+ let query=supabaseClient.from('account_verification_requests').select('*').order('created_at',{ascending:false}).limit(300);
+ if(isAccountReviewAgent())query=query.eq('assigned_reviewer_id',currentUser.id);
+ const {data,error}=await query;
+ if(error){body.innerHTML='<tr><td colspan="6">Could not load applications: '+esc(error.message)+'</td></tr>';return;}
+ const rows=data||[];
+ const counts={pending:0,in_review:0,needs_information:0,decided:0};
+ rows.forEach(r=>{if(r.status==='pending')counts.pending++;else if(r.status==='in_review')counts.in_review++;else if(r.status==='needs_information')counts.needs_information++;else counts.decided++;});
+ const countIds=['kycPendingCount','kycReviewCount','kycInfoCount','kycDecidedCount'],countValues=[counts.pending,counts.in_review,counts.needs_information,counts.decided];
+ countIds.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=countValues[i];});
+ const caption=document.getElementById('kycQueueCaption');if(caption)caption.textContent=rows.length+' applications visible to your role';
+ const adminCount=document.getElementById('adminKycQueueCount');if(adminCount&&isAdmin())adminCount.textContent=rows.filter(r=>['pending','in_review','needs_information'].includes(r.status)).length+' active applications';
+ let reviewers=[];
+ if(isAdmin()){const rr=await supabaseClient.from('profiles').select('id,display_name,app_role').in('app_role',['account_review_agent']).order('display_name');reviewers=rr.data||[];}
+ body.innerHTML=rows.length?rows.map(r=>{
+  const who=esc(r.legal_name||'Applicant')+'<br><span class="smallmuted">'+esc(shortId(r.profile_id))+'</span>';
+  const contact=esc(r.phone||'No phone provided')+'<br><span class="smallmuted">'+esc(r.address||'No address')+'</span>'+(r.organisation_name?'<br><b>'+esc(r.organisation_name)+'</b>':'');
+  const assignment=isAdmin()?'<select class="select" id="kyc-assignee-'+r.id+'"><option value="">Unassigned</option>'+reviewers.map(x=>'<option value="'+x.id+'" '+(r.assigned_reviewer_id===x.id?'selected':'')+'>'+esc(x.display_name||shortId(x.id))+'</option>').join('')+'</select><button class="secondary" style="margin-top:4px" onclick="assignAccountReviewer(\''+r.id+'\')">Assign</button>':esc(r.assigned_reviewer_id===currentUser.id?'Assigned to me':r.assigned_reviewer_id?shortId(r.assigned_reviewer_id):'Unassigned');
+  const notes='<textarea id="kyc-note-'+r.id+'" rows="2" placeholder="Review notes">'+esc(r.reviewer_notes||'')+'</textarea>';
+  let actions='';
+  if(isAccountReviewAgent()){
+   actions='<button class="secondary" onclick="updateAccountReview(\''+r.id+'\',\'in_review\')">Start review</button> <button class="secondary" onclick="updateAccountReview(\''+r.id+'\',\'needs_information\')">Request info</button>';
+  }else{
+   actions='<button class="secondary" onclick="updateAccountReview(\''+r.id+'\',\'in_review\')">In review</button> <button class="secondary" onclick="updateAccountReview(\''+r.id+'\',\'needs_information\')">Request info</button> <button class="primary" onclick="updateAccountReview(\''+r.id+'\',\'approved\')">Approve</button> <button class="secondary" onclick="updateAccountReview(\''+r.id+'\',\'rejected\')">Reject</button>';
+  }
+  return '<tr><td>'+who+'</td><td>'+esc(r.request_type.replace(/_/g,' '))+'</td><td>'+contact+'</td><td><span class="status '+(r.status==='approved'?'verified':r.status==='rejected'?'rejected':'pending')+'">'+esc(r.status.replace(/_/g,' '))+'</span><br>'+notes+'</td><td>'+assignment+'</td><td>'+actions+'</td></tr>';
+ }).join(''):'<tr><td colspan="6">No account applications in your queue.</td></tr>';
+}
+async function assignAccountReviewer(id){
+ if(!isAdmin()||!currentUser)return;
+ const reviewer=document.getElementById('kyc-assignee-'+id)?.value||null;
+ const {error}=await supabaseClient.from('account_verification_requests').update({assigned_reviewer_id:reviewer,status:reviewer?'in_review':'pending'}).eq('id',id);
+ if(error){showToast('Could not assign reviewer: '+error.message);return;}
+ showToast(reviewer?'Account application assigned.':'Application returned to unassigned queue.');
+ await loadAccountReviewWorkspace();
+}
+async function updateAccountReview(id,status){
+ if(!canOpenAccountReview()||!currentUser)return;
+ const notes=document.getElementById('kyc-note-'+id)?.value.trim()||null;
+ if(['approved','rejected'].includes(status)&&!isAdmin()&&!isAccountReviewLead()){showToast('Only an account review lead or administrator can make the final decision.');return;}
+ if(['approved','rejected'].includes(status)&&!notes&&!confirm('No review note entered. Continue with this decision?'))return;
+ const patch={status,reviewer_notes:notes,reviewer_id:currentUser.id,updated_at:new Date().toISOString()};
+ if(['approved','rejected'].includes(status))patch.reviewed_at=new Date().toISOString();
+ const {error}=await supabaseClient.from('account_verification_requests').update(patch).eq('id',id);
+ if(error){showToast('Could not save account review: '+error.message);return;}
+ showToast(status==='approved'?'Account approved and marked verified.':status==='rejected'?'Account request rejected.':status==='needs_information'?'Applicant must provide more information.':'Review status updated.');
+ await loadAccountReviewWorkspace();
+}
 
 async function loadAdminCapabilities(){
  const body=document.getElementById('adminCapabilityRows');if(!body)return;
