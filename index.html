@@ -510,7 +510,7 @@ async function loadProfile(){
   const legal=document.getElementById('kycLegalName');if(legal&&!legal.value)legal.value=data.display_name||'';
   const phone=document.getElementById('kycPhone');if(phone&&!phone.value)phone.value=data.phone||'';
   const address=document.getElementById('kycAddress');if(address&&!address.value)address.value=data.address||data.location||'';
-  const v=document.getElementById('profileVerificationStatus');if(v){const st=data.account_verification_status||'unverified';v.textContent=st.replace(/_/g,' ');v.className='status '+(st==='verified'?'verified':st==='rejected'?'rejected':'pending');}
+  const v=document.getElementById('profileVerificationStatus');if(v){const st=data.account_verification_status||'unverified';v.textContent=isAdmin()?'Not required for administrators':st.replace(/_/g,' ');v.className='status '+(isAdmin()||st==='verified'?'verified':st==='rejected'?'rejected':'pending');}
   const pv=document.getElementById('profilePhoneVerificationStatus');if(pv){const st=data.phone_verification_status||'unverified';pv.textContent=st.replace(/_/g,' ');pv.className='status '+(st==='verified'?'verified':st==='rejected'?'rejected':'pending');}
   const av=document.getElementById('profileAddressVerificationStatus');if(av){const st=data.address_verification_status||'unverified';av.textContent=st.replace(/_/g,' ');av.className='status '+(st==='verified'?'verified':st==='rejected'?'rejected':'pending');}
  }
