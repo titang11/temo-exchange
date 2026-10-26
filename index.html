@@ -119,7 +119,7 @@ function openAuth(mode='signin'){
  document.getElementById('modalBack').classList.add('show');
 }
 function isAdmin(){return [userProfile?.app_role,userProfile?.role].some(v=>String(v||'').trim().toLowerCase()==='admin');}
-function updateAdminAccess(){document.querySelectorAll('[data-page="admin"]').forEach(el=>el.style.display=currentUser?'flex':'none');}
+function updateAdminAccess(){document.querySelectorAll('[data-page="admin"]').forEach(el=>el.style.display=isAdmin()?'flex':'none');}
 function updateAuthUI(){
  const b=document.getElementById('authButton'),a=document.getElementById('userAvatar');
  const mobileLabel=document.getElementById('mobileAuthLabel'),mobileButton=document.getElementById('mobileAuthButton');
