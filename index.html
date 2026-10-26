@@ -768,6 +768,7 @@ async function savePrimaryAccountType(id){
  if(error){showToast('Account type update failed: '+error.message);return;}
  showToast('Primary account type assigned.');await loadAdminRoleManagement();
 }
+let myAccountVerificationRequestId=null,myAccountVerificationRequestStatus=null;
 async function submitAccountVerification(event){
  event.preventDefault();
  const out=document.getElementById('profileVerificationMessage');
@@ -783,7 +784,13 @@ async function submitAccountVerification(event){
  };
  if(!payload.p_legal_name||!payload.p_address){if(out)out.textContent='Enter your full legal name and address.';return;}
  if(out)out.textContent='Submitting your request…';
- const {data,error}=await supabaseClient.rpc('request_account_verification',payload);
+ let result;
+ if(myAccountVerificationRequestStatus==='needs_information'&&myAccountVerificationRequestId){
+  result=await supabaseClient.rpc('resubmit_account_verification',{p_request_id:myAccountVerificationRequestId,...payload});
+ }else{
+  result=await supabaseClient.rpc('request_account_verification',payload);
+ }
+ const {data,error}=result;
  if(error){if(out)out.textContent=error.message.includes('already have')?'You already have a request in progress. Check the status below.':'Could not submit request: '+error.message;return;}
  if(out)out.textContent='Request submitted. Your account remains unverified until an authorised reviewer completes the checks.';
  showToast('Account verification request submitted.');
@@ -795,10 +802,10 @@ async function loadMyAccountVerificationRequest(){
  const badge=document.getElementById('profileRequestStatus'),details=document.getElementById('profileRequestDetails'),form=document.getElementById('accountVerificationForm');
  if(error){if(details)details.textContent='Could not load request status: '+error.message;return;}
  if(!data){if(badge){badge.textContent='No request yet';badge.className='status pending';}if(details)details.textContent='Submit the form to begin account verification.';return;}
- const status=data.status||'pending';
+ const status=data.status||'pending';myAccountVerificationRequestId=data.id;myAccountVerificationRequestStatus=status;
  if(badge){badge.textContent=status.replace(/_/g,' ');badge.className='status '+(status==='approved'?'verified':status==='rejected'?'rejected':'pending');}
  if(details)details.textContent='Submitted '+new Date(data.created_at).toLocaleDateString()+(data.reviewer_notes?' · Reviewer note: '+data.reviewer_notes:'');
- if(form){const btn=form.querySelector('button[type="submit"]');if(btn){btn.disabled=['pending','in_review','needs_information','approved'].includes(status);btn.textContent=status==='approved'?'Account verified':btn.disabled?'Request already submitted':'Submit account verification request';}}
+ if(form){const btn=form.querySelector('button[type="submit"]');if(btn){btn.disabled=['pending','in_review','approved'].includes(status);btn.textContent=status==='approved'?'Account verified':status==='needs_information'?'Resubmit requested information':btn.disabled?'Request already submitted':'Submit account verification request';}}
 }
 async function loadAccountReviewWorkspace(){
  const body=document.getElementById('accountReviewRows');if(!body||!supabaseClient||!currentUser)return;
