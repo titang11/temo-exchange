@@ -86,7 +86,7 @@
 </section>
 </main>
 </div>
-<nav class="mobilebar"><button data-page="home" class="active" onclick="navigate('home')"><span>⌂</span>Home</button><button data-page="market" onclick="navigate('market')"><span>▦</span>Market</button><button data-page="matches" onclick="navigate('matches')"><span>⇄</span>Matches</button><button data-page="trades" onclick="navigate('trades')"><span>▤</span>Trades</button><button data-page="create" onclick="navigate('create')"><span>＋</span>List</button><button id="mobileAuthButton" onclick="openAuth()"><span>♙</span><b id="mobileAuthLabel">Sign in</b></button></nav>
+<nav class="mobilebar"><button data-page="home" class="active" onclick="navigate('home')"><span>⌂</span>Home</button><button data-page="market" onclick="navigate('market')"><span>▦</span>Market</button><button data-page="matches" onclick="navigate('matches')"><span>⇄</span>Matches</button><button data-page="trades" onclick="navigate('trades')"><span>▤</span>Trades</button><button data-page="create" onclick="navigate('create')"><span>＋</span>List</button><button data-page="admin" onclick="navigate('admin')" style="display:none"><span>▣</span><b>Review</b></button><button id="mobileAuthButton" onclick="openAuth()"><span>♙</span><b id="mobileAuthLabel">Sign in</b></button></nav>
 </div>
 <div class="modalback" id="modalBack" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div><div class="toast" id="toast"></div>
 <script>
