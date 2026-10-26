@@ -173,6 +173,15 @@
     <div class="stat"><div class="label">COMPLETED / SUBMITTED</div><strong id="verifyCompletedCount">0</strong><small>Reports submitted or decided</small></div>
     <div class="stat"><div class="label">NEEDS ATTENTION</div><strong id="verifyAttentionCount">0</strong><small>Unassigned or escalated tasks</small></div>
   </div>
+  <div class="panel" id="agentPerformancePanel" style="margin-bottom:16px;display:none">
+    <div class="row" style="margin-bottom:12px;flex-wrap:wrap"><h2 style="font-size:18px;color:var(--green);margin:0">My performance</h2><span class="smallmuted">Calculated from task history</span></div>
+    <div class="statgrid">
+      <div class="stat"><div class="label">AVERAGE REPORT TIME</div><strong id="agentAvgReportTime">—</strong><small>Task started to report submitted</small></div>
+      <div class="stat"><div class="label">RETURNED REPORTS</div><strong id="agentReturnedReports">0</strong><small>Reports needing corrections</small></div>
+      <div class="stat"><div class="label">APPROVAL RATE</div><strong id="agentApprovalRate">—</strong><small>Approved ÷ approved and rejected</small></div>
+      <div class="stat"><div class="label">OVER 48 HOURS</div><strong id="agentOverdueTasks">0</strong><small>Assigned but not yet started</small></div>
+    </div>
+  </div>
   <div class="panel">
     <div class="row" style="margin-bottom:14px;flex-wrap:wrap"><h2 style="font-size:18px;color:var(--green);margin:0">My assigned tasks</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="exportVerificationReport('xlsx')">Export Excel</button><button class="secondary" onclick="exportVerificationReport('csv')">Export CSV</button><button class="secondary" onclick="renderVerificationWorkspace()">Refresh</button></div></div>
     <div id="verificationTaskList"><div class="empty"><strong>Loading tasks…</strong>Sign in with an authorised verification account.</div></div>
@@ -459,7 +468,15 @@ function exportServiceReport(format){
  downloadRows(rows,'temo-service-provider-report.'+(format==='xlsx'?'xlsx':'csv'),format);
 }
 
-function exportVerificationReport(format){const rows=verificationTasksCache.map(t=>({task_id:t.id,task_type:t.task_type,subject_type:t.subject_type,summary:t.summary,status:t.task_status,assigned_agent:t.assigned_agent_id||'',requested_at:t.requested_at||'',assigned_at:t.assigned_at||'',started_at:t.started_at||'',submitted_at:t.submitted_at||'',completed_at:t.completed_at||'',escalated_at:t.escalated_at||'',assignment_count:t.assignment_count||0,priority:t.priority||'normal'}));downloadRows(rows,'temo-verification-report.'+(format==='xlsx'?'xlsx':'csv'),format);}
+function exportVerificationReport(format){
+ const tasks=verificationTasksCache;
+ const submitted=tasks.filter(t=>t.started_at&&t.submitted_at);
+ const durations=submitted.map(t=>(new Date(t.submitted_at).getTime()-new Date(t.started_at).getTime())/3600000).filter(n=>Number.isFinite(n)&&n>=0);
+ const approved=tasks.filter(t=>t.task_status==='approved').length,rejected=tasks.filter(t=>t.task_status==='rejected').length;
+ const rows=[{record_type:'performance_summary',report_scope:isAgent()?'my_assigned_tasks':'team_tasks',generated_at:new Date().toISOString(),total_tasks:tasks.length,assigned_tasks:tasks.filter(t=>!!t.assigned_agent_id).length,in_progress:tasks.filter(t=>t.task_status==='in_progress').length,submitted:tasks.filter(t=>t.task_status==='submitted').length,approved,rejected,returned_for_correction:tasks.filter(t=>t.task_status==='returned').length,unassigned:tasks.filter(t=>t.task_status==='unassigned').length,escalated:tasks.filter(t=>!!t.escalated_at).length,average_start_to_report_hours:durations.length?Number((durations.reduce((a,b)=>a+b,0)/durations.length).toFixed(2)):'',approval_rate_percent:(approved+rejected)?Math.round(approved/(approved+rejected)*100):''},
+ ...tasks.map(t=>({record_type:'task_detail',task_id:t.id,task_type:t.task_type,subject_type:t.subject_type,summary:t.summary,status:t.task_status,assigned_agent:t.assigned_agent_id||'',requested_at:t.requested_at||'',assigned_at:t.assigned_at||'',started_at:t.started_at||'',submitted_at:t.submitted_at||'',completed_at:t.completed_at||'',escalated_at:t.escalated_at||'',assignment_count:t.assignment_count||0,priority:t.priority||'normal',review_notes:t.review_notes||''}))];
+ downloadRows(rows,'temo-verification-performance-report.'+(format==='xlsx'?'xlsx':'csv'),format);
+}
 function exportFinanceReport(format){const rows=[...reportSalesCache.map(s=>({record_type:'sale',date:s.completed_at||s.created_at,listing:listingByDbId(s.listing_id)?.title||s.listing_id,quantity:s.quantity,cash_received:s.cash_received,estimated_barter_value:s.barter_value,cost_of_goods:s.cost_of_goods,additional_expenses:s.additional_expenses,expense_category:'',expense_amount:''})),...reportExpenseCache.map(e=>({record_type:'business_expense',date:e.expense_date,listing:'',quantity:'',cash_received:'',estimated_barter_value:'',cost_of_goods:'',additional_expenses:'',expense_category:e.category,expense_amount:e.amount,description:e.description}))];downloadRows(rows,'temo-business-finance-report.'+(format==='xlsx'?'xlsx':'csv'),format);}
 async function renderVerificationWorkspace(){
  const list=document.getElementById('verificationTaskList');if(!list)return;
@@ -478,6 +495,23 @@ async function renderVerificationWorkspace(){
  document.getElementById('verifyInProgressCount').textContent=tasks.filter(t=>t.task_status==='in_progress').length;
  document.getElementById('verifyCompletedCount').textContent=tasks.filter(t=>['submitted','approved','rejected'].includes(t.task_status)).length;
  document.getElementById('verifyAttentionCount').textContent=tasks.filter(t=>t.task_status==='unassigned'||!!t.escalated_at).length;
+ const performancePanel=document.getElementById('agentPerformancePanel');
+ if(performancePanel){
+  performancePanel.style.display=isAgent()?'block':'none';
+  if(isAgent()){
+   const submitted=tasks.filter(t=>t.started_at&&t.submitted_at);
+   const durations=submitted.map(t=>(new Date(t.submitted_at).getTime()-new Date(t.started_at).getTime())/3600000).filter(n=>Number.isFinite(n)&&n>=0);
+   const avg=durations.length?durations.reduce((a,b)=>a+b,0)/durations.length:null;
+   const approved=tasks.filter(t=>t.task_status==='approved').length;
+   const rejected=tasks.filter(t=>t.task_status==='rejected').length;
+   const returned=tasks.filter(t=>t.task_status==='returned').length;
+   const overdue=tasks.filter(t=>['assigned','unassigned'].includes(t.task_status)&&!t.started_at&&(Date.now()-new Date(t.assigned_at||t.requested_at).getTime())>=48*3600000).length;
+   document.getElementById('agentAvgReportTime').textContent=avg===null?'—':(avg<1?Math.round(avg*60)+' min':avg.toFixed(1)+' hrs');
+   document.getElementById('agentReturnedReports').textContent=String(returned);
+   document.getElementById('agentApprovalRate').textContent=(approved+rejected)?Math.round(approved/(approved+rejected)*100)+'%':'—';
+   document.getElementById('agentOverdueTasks').textContent=String(overdue);
+  }
+ }
  const visible=leader?tasks.filter(t=>t.assigned_agent_id===currentUser.id):tasks;
  list.innerHTML=visible.length?visible.map(t=>{
  let action='<span class="smallmuted">Awaiting review / decision</span>';
