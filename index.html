@@ -13,6 +13,57 @@
 @media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:200px minmax(0,1fr)}.statgrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:720px){.topbar{height:64px;padding:0 15px}.top-actions .pill{display:none}.layout{display:block}.sidebar{display:none}.main{padding:20px 14px 92px}.hero{grid-template-columns:1fr;min-height:0}.hero-art{display:none}.headingrow{align-items:flex-start}.headingrow h1{font-size:28px}.headingrow .primary{padding:11px;font-size:10px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.listingvisual{height:105px;font-size:43px}.listingbody{padding:11px}.listing h3{font-size:13px}.price strong{font-size:15px}.listingfoot{font-size:9px}.sellericon{display:none}.stat{padding:13px}.stat strong{font-size:21px}.two-col{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.mobilebar{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fffefbf5;backdrop-filter:blur(15px);border-top:1px solid var(--line);z-index:30;justify-content:space-around;padding:8px 3px calc(8px + env(safe-area-inset-bottom))}.mobilebar button{border:0;background:transparent;color:#718074;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:5px 8px;font-weight:750}.mobilebar button span{font-size:18px}.mobilebar button.active{color:var(--green)}.mobilebar button{min-width:0;flex:1;padding-left:2px;padding-right:2px}.mobilebar button b{font-size:9px;font-weight:750}.filters{flex-direction:column}.search,.select{width:100%}.sectionhead h2{font-size:18px}.panel{padding:16px}.topbar .brand{font-size:13px}.brandmark{width:35px;height:35px}.headingrow p{font-size:12px}}
 @media(max-width:380px){.grid{grid-template-columns:1fr}.listingvisual{height:130px}.statgrid{gap:8px}.stat strong{font-size:19px}}
+
+/* TEMO glass interface refresh */
+:root{--green:#092c2c;--green2:#126b5b;--gold:#e8c46b;--cream:#edf4f1;--paper:rgba(255,255,255,.76);--ink:#142b2a;--muted:#637a76;--line:rgba(110,157,147,.22);--shadow:0 18px 50px rgba(6,42,39,.10)}
+body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),radial-gradient(ellipse at 90% 18%,#dce7f0 0,transparent 30%),linear-gradient(135deg,#f2f7f5,#e8f1ef);background-attachment:fixed}
+.topbar{background:linear-gradient(115deg,rgba(5,35,37,.96),rgba(10,68,62,.91));border-bottom:1px solid #ffffff25;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 10px 36px rgba(4,35,34,.18)}
+.brandmark{background:linear-gradient(145deg,#e9d38e,#d5f0d9);box-shadow:0 5px 20px #a8e5c52b}
+.sidebar{background:rgba(247,252,250,.52);border-right:1px solid rgba(87,139,128,.19);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.navbtn{transition:background .22s ease,color .22s ease,transform .22s ease,border-color .22s ease;border:1px solid transparent}
+.navbtn:hover{transform:translateX(3px);background:rgba(255,255,255,.72);border-color:#ffffff}
+.navbtn.active{background:linear-gradient(115deg,rgba(21,111,91,.13),rgba(255,255,255,.78));border-color:rgba(49,143,119,.22);box-shadow:inset 3px 0 #219d7d}
+.hero{background:linear-gradient(125deg,rgba(5,43,43,.97),rgba(12,88,73,.91) 67%,rgba(27,125,97,.88));border:1px solid #ffffff32;box-shadow:0 24px 60px rgba(7,55,47,.17)}
+.stat,.panel,.listing,.tradecard{background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 34px rgba(14,68,57,.055);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px)}
+.stat,.panel,.listing,.tradecard{transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease}
+.stat:hover,.panel:hover{border-color:rgba(54,153,125,.3);box-shadow:0 15px 38px rgba(14,68,57,.09)}
+.listing{overflow:hidden}.listing:hover{transform:translateY(-4px);box-shadow:0 20px 42px rgba(14,68,57,.13)}
+.primary{background:linear-gradient(120deg,#0c554b,#17876d);box-shadow:0 8px 22px rgba(15,112,87,.2);transition:transform .2s,box-shadow .2s}
+.primary:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(15,112,87,.27)}
+.secondary,.search,.select,.field input,.field select,.field textarea{background:rgba(255,255,255,.82);border-color:rgba(91,143,132,.25)}
+.modal{background:rgba(248,253,250,.96);border:1px solid #ffffff;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+/* One-tap expandable mobile navigation */
+.mobile-menu-wrap{display:none}
+@media(max-width:720px){
+ .main{padding-bottom:115px}
+ .mobile-menu-wrap{display:block;position:fixed;inset:0;z-index:40;pointer-events:none}
+ .mobile-menu-scrim{position:absolute;inset:0;background:rgba(4,28,29,.30);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s ease;pointer-events:none}
+ .quick-menu-panel{position:absolute;left:14px;right:14px;bottom:calc(91px + env(safe-area-inset-bottom));padding:15px;border:1px solid rgba(255,255,255,.78);border-radius:24px;background:rgba(241,250,247,.88);box-shadow:0 25px 70px rgba(5,42,39,.23);backdrop-filter:blur(26px) saturate(145%);-webkit-backdrop-filter:blur(26px) saturate(145%);opacity:0;visibility:hidden;transform:translateY(22px) scale(.94);transform-origin:bottom right;transition:opacity .25s ease,transform .32s cubic-bezier(.2,.85,.25,1),visibility .25s;pointer-events:none;max-height:min(70vh,570px);overflow:auto}
+ .quick-menu-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:1px 3px 12px;color:#174c43;font-size:10px;font-weight:900;letter-spacing:.12em}
+ .quick-menu-heading span+span{font-size:10px;font-weight:600;letter-spacing:0;color:#6b8580}
+ .quick-menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+ .quick-item{min-width:0;min-height:75px;border:1px solid rgba(255,255,255,.92);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.91),rgba(222,241,234,.75));color:#16473f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 4px;box-shadow:0 5px 15px rgba(18,82,67,.055);opacity:0;transform:translateY(12px) scale(.82);transition:opacity .24s ease,transform .32s cubic-bezier(.2,.85,.25,1),background .2s,border-color .2s;transition-delay:0ms}
+ .quick-item span{width:31px;height:31px;display:grid;place-items:center;border-radius:11px;background:rgba(25,128,99,.10);font-size:20px;color:#11785f}
+ .quick-item b{font-size:10px;font-weight:800;line-height:1.15;text-align:center}
+ .quick-item:active{transform:scale(.95)}
+ .quick-item.active{background:linear-gradient(145deg,#d5f4e5,#ffffff);border-color:#8ad3b5}
+ .quick-account{grid-column:1/-1;min-height:48px;flex-direction:row;gap:10px}
+ .quick-account span{width:28px;height:28px}
+ .quick-menu-trigger{pointer-events:auto;position:absolute;right:18px;bottom:calc(17px + env(safe-area-inset-bottom));width:65px;height:65px;border:1px solid rgba(255,255,255,.72);border-radius:23px;background:linear-gradient(145deg,#168d70,#075448);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:0 12px 32px rgba(4,69,55,.35),inset 0 1px 0 #ffffff55;transition:transform .28s cubic-bezier(.2,.85,.25,1),border-radius .25s,box-shadow .25s}
+ .quick-trigger-icon{font-size:31px;line-height:31px;font-weight:300;transition:transform .3s cubic-bezier(.2,.85,.25,1)}
+ .quick-trigger-label{font-size:8px;font-weight:900;letter-spacing:.16em}
+ .mobile-menu-wrap.menu-open{pointer-events:auto}
+ .menu-open .mobile-menu-scrim{opacity:1;visibility:visible;pointer-events:auto}
+ .menu-open .quick-menu-panel{opacity:1;visibility:visible;transform:translateY(0) scale(1);pointer-events:auto}
+ .menu-open .quick-menu-trigger{transform:rotate(-4deg);border-radius:50%;box-shadow:0 14px 38px rgba(4,69,55,.43),inset 0 1px 0 #ffffff55}
+ .menu-open .quick-trigger-icon{transform:rotate(45deg)}
+ .menu-open .quick-item{opacity:1;transform:translateY(0) scale(1)}
+ .menu-open .quick-item:nth-child(1){transition-delay:25ms}.menu-open .quick-item:nth-child(2){transition-delay:45ms}.menu-open .quick-item:nth-child(3){transition-delay:65ms}.menu-open .quick-item:nth-child(4){transition-delay:85ms}.menu-open .quick-item:nth-child(5){transition-delay:105ms}.menu-open .quick-item:nth-child(6){transition-delay:125ms}.menu-open .quick-item:nth-child(7){transition-delay:145ms}.menu-open .quick-item:nth-child(8){transition-delay:165ms}.menu-open .quick-item:nth-child(9){transition-delay:185ms}.menu-open .quick-item:nth-child(10){transition-delay:205ms}.menu-open .quick-item:nth-child(11){transition-delay:225ms}.menu-open .quick-item:nth-child(12){transition-delay:245ms}.menu-open .quick-item:nth-child(13){transition-delay:265ms}
+ .toast{bottom:calc(95px + env(safe-area-inset-bottom))}
+}
+@media(max-width:380px){.quick-menu-panel{left:9px;right:9px;padding:11px}.quick-menu-grid{gap:6px}.quick-item{min-height:68px}.quick-item b{font-size:9px}.quick-menu-trigger{right:13px;width:60px;height:60px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 <body>
@@ -209,7 +260,28 @@
 </div></section>
 </main>
 </div>
-<nav class="mobilebar"><button data-page="verification" onclick="navigate('verification')" style="display:none"><span>✓</span><b>Tasks</b></button><button data-page="home" class="active" onclick="navigate('home')"><span>⌂</span><b>Home</b></button><button data-page="market" onclick="navigate('market')"><span>▦</span><b>Market</b></button><button data-page="inventory" onclick="navigate('inventory')"><span>▣</span><b>Stock</b></button><button data-page="finance" onclick="navigate('finance')"><span>▤</span><b>Finance</b></button><button data-page="trades" onclick="navigate('trades')"><span>⇄</span><b>Trades</b></button><button data-page="services" onclick="navigate('services')"><span>◷</span><b>Services</b></button><button id="mobileAuthButton" onclick="openAuth()"><span>♙</span><b id="mobileAuthLabel">Account</b></button></nav>
+<div class="mobile-menu-wrap" id="mobileMenuWrap">
+  <div class="mobile-menu-scrim" id="mobileMenuScrim" onclick="toggleQuickMenu(false)" aria-hidden="true"></div>
+  <div class="quick-menu-panel" id="quickMenuPanel" aria-label="Quick navigation" aria-hidden="true">
+    <div class="quick-menu-heading"><span>QUICK ACCESS</span><span>Choose where to go</span></div>
+    <div class="quick-menu-grid">
+      <button class="quick-item" data-page="home" onclick="quickNavigate('home')"><span>⌂</span><b>Overview</b></button>
+      <button class="quick-item" data-page="market" onclick="quickNavigate('market')"><span>▦</span><b>Marketplace</b></button>
+      <button class="quick-item" data-page="matches" onclick="quickNavigate('matches')"><span>⇄</span><b>My matches</b></button>
+      <button class="quick-item" data-page="trades" onclick="quickNavigate('trades')"><span>⇄</span><b>Trade centre</b></button>
+      <button class="quick-item" data-page="saved" onclick="quickNavigate('saved')"><span>♡</span><b>Saved</b></button>
+      <button class="quick-item" data-page="inventory" onclick="quickNavigate('inventory')"><span>▣</span><b>Inventory</b></button>
+      <button class="quick-item" data-page="finance" onclick="quickNavigate('finance')"><span>▤</span><b>Finances</b></button>
+      <button class="quick-item" data-page="services" onclick="quickNavigate('services')"><span>◷</span><b>Services</b></button>
+      <button class="quick-item" data-page="create" onclick="quickNavigate('create')"><span>＋</span><b>List an asset</b></button>
+      <button class="quick-item" data-page="profile" onclick="quickNavigate('profile')"><span>◎</span><b>My profile</b></button>
+      <button class="quick-item" data-page="verification" onclick="quickNavigate('verification')" style="display:none"><span>✓</span><b>My tasks</b></button>
+      <button class="quick-item" data-page="admin" onclick="quickNavigate('admin')" style="display:none"><span>◆</span><b>Team desk</b></button>
+      <button class="quick-item quick-account" id="mobileAuthButton" onclick="openAuth()"><span>♙</span><b id="mobileAuthLabel">Account / sign in</b></button>
+    </div>
+  </div>
+  <button class="quick-menu-trigger" id="quickMenuTrigger" onclick="toggleQuickMenu()" aria-label="Open quick navigation" aria-expanded="false" aria-controls="quickMenuPanel"><span class="quick-trigger-icon">＋</span><span class="quick-trigger-label">MENU</span></button>
+</div>
 </div>
 <div class="modalback" id="modalBack" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div><div class="toast" id="toast"></div>
 <script>
@@ -325,7 +397,10 @@ function card(x){
   </article>`;
 }
 
-function navigate(page){if(isOpsRestricted()&&!['verification','profile'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='saved')renderSaved();if(page==='trades')renderTrades();if(page==='admin')renderAdmin();if(page==='home')renderFeatured();if(page==='matches')renderMatches();if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
+function toggleQuickMenu(force){const wrap=document.getElementById('mobileMenuWrap');if(!wrap)return;const open=typeof force==='boolean'?force:!wrap.classList.contains('menu-open');wrap.classList.toggle('menu-open',open);const trigger=document.getElementById('quickMenuTrigger'),panel=document.getElementById('quickMenuPanel');if(trigger)trigger.setAttribute('aria-expanded',String(open));if(trigger)trigger.setAttribute('aria-label',open?'Close quick navigation':'Open quick navigation');if(panel)panel.setAttribute('aria-hidden',String(!open));document.body.style.overflow=open&&window.innerWidth<=720?'hidden':'';}
+function quickNavigate(page){toggleQuickMenu(false);navigate(page);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')toggleQuickMenu(false);});
+function navigate(page){toggleQuickMenu(false);if(isOpsRestricted()&&!['verification','profile'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='saved')renderSaved();if(page==='trades')renderTrades();if(page==='admin')renderAdmin();if(page==='home')renderFeatured();if(page==='matches')renderMatches();if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
 function updateStats(){document.getElementById('statListings').textContent=listings.length;document.getElementById('statSaved').textContent=saved.length;document.getElementById('statTrades').textContent=offers.length;document.getElementById('tradeCount').textContent=offers.length;document.getElementById('profileListings').textContent=listings.filter(x=>x.createdByMe).length}
 
 function money(v){return 'P'+Number(v||0).toLocaleString('en-BW',{minimumFractionDigits:2,maximumFractionDigits:2});}
