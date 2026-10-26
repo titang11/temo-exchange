@@ -265,8 +265,8 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
   </div><div class="panel"><div class="row"><h2 style="font-size:18px;color:var(--green);margin-top:0">Conversation</h2><span id="staffCurrentConversationTitle" class="smallmuted">Choose a conversation</span></div><div id="staffThread"><div class="empty"><strong>No conversation selected</strong>Choose a conversation on the left to read or reply.</div></div>
     <form id="staffReplyForm" onsubmit="sendStaffReply(event)" style="margin-top:14px;display:none"><div class="field"><label>Reply</label><textarea id="staffReplyBody" required maxlength="5000" placeholder="Write a staff message…"></textarea></div><button class="primary" type="submit" style="margin-top:8px">Send message</button></form>
   </div></div>
-  <div id="staffAdminTools" style="display:none;margin-top:18px"><div class="panel"><h2 style="font-size:18px;color:var(--green);margin-top:0">Create a staff account</h2><p class="smallmuted">Only an administrator can send an invitation. Staff set their own password through the secure email invitation; no shared temporary password is displayed.</p>
-    <form id="createStaffForm" onsubmit="createStaffAccount(event)"><div class="formgrid"><div class="field"><label>Staff full name</label><input id="newStaffName" name="display_name" required maxlength="120"></div><div class="field"><label>Staff email</label><input id="newStaffEmail" name="email" type="email" required></div><div class="field"><label>Staff / management role</label><select id="newStaffRole" name="app_role"><option value="verification_agent">Verification agent · Staff</option><option value="account_review_agent">Account review agent · Staff</option><option value="team_leader">Team leader · Management</option><option value="account_review_lead">Account review lead · Management</option></select></div></div><button class="primary" type="submit" style="margin-top:12px">Send secure invitation</button><div id="createStaffMessage" class="smallmuted staff-invite-message" style="margin-top:8px"></div></form>
+  <div id="staffAdminTools" style="display:none;margin-top:18px"><div class="panel"><h2 style="font-size:18px;color:var(--green);margin-top:0">Create a staff account</h2><p class="smallmuted">Only an administrator can create staff accounts. Use email invitation or phone activation after SMS authentication is configured. No shared temporary password is displayed.</p>
+    <form id="createStaffForm" onsubmit="createStaffAccount(event)"><div class="formgrid"><div class="field"><label>Staff full name</label><input id="newStaffName" name="display_name" required maxlength="120"></div><div class="field"><label>Staff email (optional if using phone)</label><input id="newStaffEmail" name="email" type="email" placeholder="staff@example.com"></div><div class="field"><label>Staff phone (required if no email)</label><input id="newStaffPhone" name="phone" type="tel" placeholder="+267 7X XXX XXX"></div><div class="field"><label>Staff / management role</label><select id="newStaffRole" name="app_role"><option value="verification_agent">Verification agent · Staff</option><option value="account_review_agent">Account review agent · Staff</option><option value="team_leader">Team leader · Management</option><option value="account_review_lead">Account review lead · Management</option></select></div></div><button class="primary" type="submit" style="margin-top:12px">Send secure invitation</button><div id="createStaffMessage" class="smallmuted staff-invite-message" style="margin-top:8px"></div></form>
   </div></div>
   <div id="moderationTools" style="display:none;margin-top:18px"><div class="panel"><h2 style="font-size:18px;color:var(--green);margin-top:0">Reported community content</h2><p class="smallmuted">Only specifically reported posts appear here. Each moderation action is logged.</p><div id="reportedPostsList"></div></div></div>
 </section>
@@ -373,10 +373,10 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
 </div>
 <div class="panel" style="margin-top:16px">
   <div class="row" style="margin-bottom:14px"><h2 style="font-size:18px;color:var(--green);margin:0">Staff management · Hire / invite</h2><span class="status verified">Admin only</span></div>
-  <p class="smallmuted">Create a staff account by sending a secure email invitation. The invitee sets their own password. Verification agents and account-review agents are staff-class accounts; team leaders and account-review leads are management-class accounts. This form cannot create another administrator.</p>
+  <p class="smallmuted">Create a staff account by email invitation or phone-based activation. Phone activation requires SMS authentication to be configured in Supabase. Verification agents and account-review agents are staff-class accounts; team leaders and account-review leads are management-class accounts. This form cannot create another administrator.</p>
   <form id="adminCreateStaffForm" onsubmit="createStaffAccount(event)"><div class="formgrid">
     <div class="field"><label>Staff full name</label><input name="display_name" id="adminNewStaffName" required maxlength="120"></div>
-    <div class="field"><label>Staff email</label><input name="email" id="adminNewStaffEmail" type="email" required></div>
+    <div class="field"><label>Staff email (optional if using phone)</label><input name="email" id="adminNewStaffEmail" type="email" placeholder="staff@example.com"></div><div class="field"><label>Staff phone (required if no email)</label><input name="phone" id="adminNewStaffPhone" type="tel" placeholder="+267 7X XXX XXX"></div>
     <div class="field"><label>Staff / management role</label><select name="app_role" id="adminNewStaffRole"><option value="verification_agent">Verification agent · Staff</option><option value="account_review_agent">Account review agent · Staff</option><option value="team_leader">Team leader · Management</option><option value="account_review_lead">Account review lead · Management</option></select></div>
   </div><button class="primary" type="submit" style="margin-top:12px">Send secure invitation</button><div class="smallmuted staff-invite-message" style="margin-top:8px"></div></form>
 </div>
@@ -446,9 +446,41 @@ const categories=["All","Fresh produce","Grains & cereals","Livestock","Poultry"
 
 function persist(){localStorage.setItem('temo_saved',JSON.stringify(saved));localStorage.setItem('temo_matches',JSON.stringify(matches));updateStats()}
 function authMessage(msg){const el=document.getElementById('authMessage');if(el)el.textContent=msg;}
+let activeAuthMethod='email';
+let pendingPhoneAuth='';
+function setAuthMethod(method){
+ activeAuthMethod=method==='phone'?'phone':'email';
+ const emailFields=document.getElementById('emailAuthFields'),phoneFields=document.getElementById('phoneAuthFields');
+ if(emailFields)emailFields.style.display=activeAuthMethod==='email'?'block':'none';
+ if(phoneFields)phoneFields.style.display=activeAuthMethod==='phone'?'block':'none';
+ document.getElementById('authEmailTab')?.classList.toggle('active',activeAuthMethod==='email');
+ document.getElementById('authPhoneTab')?.classList.toggle('active',activeAuthMethod==='phone');
+ authMessage(activeAuthMethod==='phone'?'Enter your phone number in international format, then request an SMS code.':'Use your email and password, or create an account.');
+}
+async function sendPhoneCode(){
+ if(!supabaseClient){authMessage('Supabase library did not load. Refresh and try again.');return;}
+ const phone=document.getElementById('authPhone')?.value.trim()||'';
+ const name=document.getElementById('authName')?.value.trim()||'';
+ if(!/^\+[1-9]\d{7,14}$/.test(phone)){authMessage('Enter a valid international phone number, for example +267XXXXXXXX.');return;}
+ authMessage('Requesting SMS code…');
+ const {error}=await supabaseClient.auth.signInWithOtp({phone,options:{shouldCreateUser:true,data:{display_name:name||'TEMO member',account_type:'farmer'}}});
+ if(error){authMessage('Could not send SMS code: '+error.message);return;}
+ pendingPhoneAuth=phone;authMessage('If phone authentication and SMS delivery are configured, a code has been sent. Enter it above.');
+}
+async function verifyPhoneCode(){
+ if(!supabaseClient){authMessage('Supabase library did not load. Refresh and try again.');return;}
+ const phone=(document.getElementById('authPhone')?.value.trim()||pendingPhoneAuth);
+ const token=document.getElementById('authPhoneOtp')?.value.trim()||'';
+ if(!/^\+[1-9]\d{7,14}$/.test(phone)||!token){authMessage('Enter the same phone number and the SMS code.');return;}
+ authMessage('Verifying code…');
+ const {data,error}=await supabaseClient.auth.verifyOtp({phone,token,type:'sms'});
+ if(error){authMessage('Phone verification failed: '+error.message);return;}
+ currentUser=data.user;await loadProfile();updateAuthUI();await Promise.all([loadRemoteListings(),loadRemoteOffers(),loadRemoteMatches()]);closeModal();showToast('Phone verified and signed in');
+}
+
 function openAuth(mode='signin'){
  if(currentUser){document.getElementById('modalContent').innerHTML=`<h2>Your TEMO account</h2><p>Signed in as <b>${esc(currentUser.email||'')}</b>.</p><div class="field"><label>New password (minimum 8 characters)</label><input id="changePasswordValue" type="password" minlength="8" autocomplete="new-password" placeholder="Choose a new password"></div><button class="primary" style="width:100%;margin-top:10px" onclick="changeOwnPassword()">Change my password</button><div id="passwordMessage" class="smallmuted" style="margin-top:8px"></div><button class="secondary" style="width:100%;margin-top:10px" onclick="signOutUser()">Sign out</button>`;}
- else {document.getElementById('modalContent').innerHTML=`<h2>Welcome to TEMO EXCHANGE</h2><p>Register or sign in to publish listings to the shared marketplace.</p><div class="field"><label>Full name / business name</label><input id="authName" autocomplete="name" placeholder="Your name or business" /></div><div class="field" style="margin-top:12px"><label>Email address</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com" /></div><div class="field" style="margin-top:12px"><label>Password (at least 8 characters)</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="Enter password" /></div><div id="authMessage" class="notice" role="status">Email confirmation may be required before you can sign in.</div><div class="two-col"><button class="primary" onclick="signInUser()">Sign in</button><button class="secondary" onclick="registerUser()">Create account</button></div><button class="textbtn" style="margin-top:12px" onclick="sendPasswordReset()">Forgot your password?</button>`;}
+ else {document.getElementById('modalContent').innerHTML=`<h2>Welcome to TEMO EXCHANGE</h2><p>Register or sign in to publish listings to the shared marketplace.</p><div class="chips" style="margin:12px 0"><button type="button" class="chip active" id="authEmailTab" onclick="setAuthMethod('email')">Email & password</button><button type="button" class="chip" id="authPhoneTab" onclick="setAuthMethod('phone')">Phone & SMS code</button></div><div class="field"><label>Full name / business name</label><input id="authName" autocomplete="name" placeholder="Your name or business" /></div><div id="emailAuthFields"><div class="field" style="margin-top:12px"><label>Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" /></div><div class="field" style="margin-top:12px"><label>Password (at least 8 characters)</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Enter password" /></div><div class="two-col" style="margin-top:12px"><button class="primary" onclick="signInUser()">Sign in</button><button class="secondary" onclick="registerUser()">Create account</button></div><button class="textbtn" style="margin-top:12px" onclick="sendPasswordReset()">Forgot your password?</button></div><div id="phoneAuthFields" style="display:none"><div class="field" style="margin-top:12px"><label>Phone number (international format)</label><input id="authPhone" type="tel" autocomplete="tel" placeholder="+267 7X XXX XXX" /></div><div class="field" style="margin-top:12px"><label>SMS verification code</label><input id="authPhoneOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter code from SMS" /></div><div class="two-col" style="margin-top:12px"><button class="primary" onclick="sendPhoneCode()">Send SMS code</button><button class="secondary" onclick="verifyPhoneCode()">Verify & sign in</button></div><p class="smallmuted">Phone sign-in works after the project owner enables phone authentication and configures an SMS provider in Supabase.</p></div><div id="authMessage" class="notice" role="status">Choose email or phone access.</div>`;}
  document.getElementById('modalBack').classList.add('show');
 }
 function isAdmin(){return String(userProfile?.app_role||'').trim().toLowerCase()==='admin';}
@@ -1113,12 +1145,17 @@ async function createStaffAccount(e){
  const form=e.currentTarget;
  const status=form.querySelector('.staff-invite-message')||document.getElementById('createStaffMessage');
  const displayName=form.querySelector('[name="display_name"]')?.value.trim()||'';
- const email=form.querySelector('[name="email"]')?.value.trim()||'';
+ const email=form.querySelector('[name="email"]')?.value.trim().toLowerCase()||'';
+ const phone=form.querySelector('[name="phone"]')?.value.trim()||'';
  const appRole=form.querySelector('[name="app_role"]')?.value||'';
- if(status)status.textContent='Sending secure invitation…';
- const {data,error}=await supabaseClient.functions.invoke('admin-create-staff',{body:{display_name:displayName,email,app_role:appRole}});
- if(error||data?.error){if(status)status.textContent='Could not create staff invitation: '+(data?.error||error?.message||'Unknown error');return;}
- if(status)status.textContent=data.message||'Invitation sent.';
+ if(!displayName){if(status)status.textContent='Enter the staff member’s full name.';return;}
+ if(!email&&!phone){if(status)status.textContent='Enter an email address or a phone number.';return;}
+ if(email&&phone){if(status)status.textContent='Choose one activation method per staff account: email OR phone.';return;}
+ if(phone&&!/^\+[1-9]\d{7,14}$/.test(phone)){if(status)status.textContent='Use international phone format, e.g. +267XXXXXXXX.';return;}
+ if(status)status.textContent=email?'Sending secure email invitation…':'Creating phone-based staff account…';
+ const {data,error}=await supabaseClient.functions.invoke('admin-create-staff',{body:{display_name:displayName,email:email||undefined,phone:phone||undefined,app_role:appRole}});
+ if(error||data?.error){if(status)status.textContent='Could not create staff account: '+(data?.error||error?.message||'Unknown error');return;}
+ if(status)status.textContent=data.message||'Staff account prepared.';
  form.reset();
  await Promise.allSettled([loadAdminRoleManagement(),loadStaffWorkspace()]);
 }
