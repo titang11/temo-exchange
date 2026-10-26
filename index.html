@@ -85,7 +85,7 @@
   </div><div style="display:flex;justify-content:flex-end;margin-top:18px"><button class="primary" type="submit">Publish listing →</button></div></form></div>
 </section>
 <section class="page" id="page-inventory">
-  <div class="eyebrow">MY BUSINESS</div><div class="headingrow"><div><h1>Stock & inventory</h1><p>Manage stock tracking and your cost per unit for each listing.</p></div><button class="secondary" onclick="navigate('create')">＋ New listing</button></div>
+  <div class="eyebrow">MY BUSINESS</div><div class="headingrow"><div><h1>Stock & inventory</h1><p>Manage stock tracking and your cost per unit for each listing.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="exportInventoryReport('xlsx')">Export Excel</button><button class="secondary" onclick="exportInventoryReport('csv')">Export CSV</button><button class="secondary" onclick="navigate('create')">＋ New listing</button></div></div>
   <div class="notice">Stock figures are seller-maintained. TEMO does not independently verify physical stock. The current version does not reserve quantities automatically when offers are accepted.</div>
   <div id="inventoryList"></div>
 </section>
@@ -174,7 +174,7 @@
     <div class="stat"><div class="label">NEEDS ATTENTION</div><strong id="verifyAttentionCount">0</strong><small>Unassigned or escalated tasks</small></div>
   </div>
   <div class="panel" id="agentPerformancePanel" style="margin-bottom:16px;display:none">
-    <div class="row" style="margin-bottom:12px;flex-wrap:wrap"><h2 style="font-size:18px;color:var(--green);margin:0">My performance</h2><span class="smallmuted">Calculated from task history</span></div>
+    <div class="row" style="margin-bottom:12px;flex-wrap:wrap"><h2 style="font-size:18px;color:var(--green);margin:0">My performance</h2><span class="smallmuted">Based on your current assigned task list</span></div>
     <div class="statgrid">
       <div class="stat"><div class="label">AVERAGE REPORT TIME</div><strong id="agentAvgReportTime">—</strong><small>Task started to report submitted</small></div>
       <div class="stat"><div class="label">RETURNED REPORTS</div><strong id="agentReturnedReports">0</strong><small>Reports needing corrections</small></div>
@@ -459,13 +459,18 @@ function downloadRows(rows,filename,format){
 function exportServiceReport(format){
  const uid=currentUser?.id;if(!uid){showToast('Sign in to export your service report.');return;}
  const ownOrders=reportServiceOrders.filter(o=>o.created_by===uid||o.customer_id===uid),orderIds=new Set(ownOrders.map(o=>o.id));
+ const ownStages=reportServiceStages.filter(s=>s.provider_id===uid);
+ const ownQuotes=reportServiceQuotes.filter(q=>q.provider_id===uid);
+ const approvedQuotes=ownQuotes.filter(q=>q.quote_status==='accepted');
+ const completedStages=ownStages.filter(s=>s.stage_status==='completed');
  const rows=[
+  {record_type:'service_performance_summary',generated_at:new Date().toISOString(),own_service_offerings:reportServiceOfferings.filter(o=>o.provider_id===uid).length,quotes_submitted:ownQuotes.length,quotes_accepted:approvedQuotes.length,completed_provider_jobs:completedStages.length,active_provider_jobs:ownStages.filter(s=>['accepted','in_progress'].includes(s.stage_status)).length,agreed_provider_value_bwp:ownStages.reduce((sum,s)=>sum+Number(s.agreed_price||0),0),connected_orders_created_or_owned:ownOrders.length},
   ...reportServiceOfferings.filter(o=>o.provider_id===uid).map(o=>({record_type:'service_offering',service_id:o.id,service_type:o.service_type,title:o.title,approval_status:o.approval_status,available:o.available,pricing_model:o.pricing_model,price_per_unit:o.price_per_unit,service_area:o.service_area})),
   ...reportServiceQuotes.filter(q=>q.provider_id===uid||orderIds.has(q.order_id)).map(q=>({record_type:'service_quote',order_id:q.order_id,stage_id:q.stage_id,provider_id:q.provider_id,price:q.price,currency:q.currency,status:q.quote_status,description:q.description,created_at:q.created_at})),
   ...reportServiceStages.filter(s=>s.provider_id===uid||orderIds.has(s.order_id)).map(s=>({record_type:'service_stage',order_id:s.order_id,stage_id:s.id,stage_type:s.stage_type,title:s.title,status:s.stage_status,provider_id:s.provider_id,agreed_price:s.agreed_price,scheduled_for:s.scheduled_for,completed_at:s.completed_at})),
   ...ownOrders.map(o=>({record_type:'connected_order',order_id:o.id,title:o.title,status:o.order_status,coordination_mode:o.coordination_mode,quantity:o.product_quantity,unit:o.product_unit,pickup:o.pickup_location,destination:o.destination,created_at:o.created_at}))
  ];
- downloadRows(rows,'temo-service-provider-report.'+(format==='xlsx'?'xlsx':'csv'),format);
+ downloadRows(rows,'temo-service-performance-report.'+(format==='xlsx'?'xlsx':'csv'),format);
 }
 
 function exportVerificationReport(format){
@@ -477,6 +482,14 @@ function exportVerificationReport(format){
  ...tasks.map(t=>({record_type:'task_detail',task_id:t.id,task_type:t.task_type,subject_type:t.subject_type,summary:t.summary,status:t.task_status,assigned_agent:t.assigned_agent_id||'',requested_at:t.requested_at||'',assigned_at:t.assigned_at||'',started_at:t.started_at||'',submitted_at:t.submitted_at||'',completed_at:t.completed_at||'',escalated_at:t.escalated_at||'',assignment_count:t.assignment_count||0,priority:t.priority||'normal',review_notes:t.review_notes||''}))];
  downloadRows(rows,'temo-verification-performance-report.'+(format==='xlsx'?'xlsx':'csv'),format);
 }
+async function exportInventoryReport(format){
+ if(!currentUser||!supabaseClient){showToast('Sign in to export your inventory report.');return;}
+ const {data,error}=await supabaseClient.from('listings').select('id,title,category,quantity,unit,price,currency,location,listing_status,verification_status,stock_tracking_enabled,reserved_quantity,sold_quantity,cost_per_unit,provider_availability,created_at,updated_at').eq('owner_id',currentUser.id).order('created_at',{ascending:false});
+ if(error){showToast('Could not load inventory report: '+error.message);return;}
+ const rows=(data||[]).map(x=>({listing_id:x.id,title:x.title,category:x.category,quantity_listed:x.quantity,unit:x.unit,stock_tracking_enabled:x.stock_tracking_enabled,reserved_quantity:x.reserved_quantity,sold_quantity:x.sold_quantity,estimated_remaining_quantity:x.stock_tracking_enabled?Math.max(0,Number(x.quantity||0)-Number(x.sold_quantity||0)):null,asking_price:x.price,currency:x.currency,estimated_unit_cost:x.cost_per_unit,location:x.location,listing_status:x.listing_status,verification_status:x.verification_status,availability:x.provider_availability,created_at:x.created_at,updated_at:x.updated_at}));
+ downloadRows(rows,'temo-inventory-report.'+(format==='xlsx'?'xlsx':'csv'),format);
+}
+
 function exportFinanceReport(format){const rows=[...reportSalesCache.map(s=>({record_type:'sale',date:s.completed_at||s.created_at,listing:listingByDbId(s.listing_id)?.title||s.listing_id,quantity:s.quantity,cash_received:s.cash_received,estimated_barter_value:s.barter_value,cost_of_goods:s.cost_of_goods,additional_expenses:s.additional_expenses,expense_category:'',expense_amount:''})),...reportExpenseCache.map(e=>({record_type:'business_expense',date:e.expense_date,listing:'',quantity:'',cash_received:'',estimated_barter_value:'',cost_of_goods:'',additional_expenses:'',expense_category:e.category,expense_amount:e.amount,description:e.description}))];downloadRows(rows,'temo-business-finance-report.'+(format==='xlsx'?'xlsx':'csv'),format);}
 async function renderVerificationWorkspace(){
  const list=document.getElementById('verificationTaskList');if(!list)return;
