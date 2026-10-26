@@ -351,16 +351,30 @@ function openAuth(mode='signin'){
 function isAdmin(){return String(userProfile?.app_role||'').trim().toLowerCase()==='admin';}
 function isAgent(){return String(userProfile?.app_role||'').trim().toLowerCase()==='verification_agent';}
 function isTeamLeader(){return String(userProfile?.app_role||'').trim().toLowerCase()==='team_leader';}
+function isAccountReviewAgent(){return String(userProfile?.app_role||'').trim().toLowerCase()==='account_review_agent';}
+function isAccountReviewLead(){return String(userProfile?.app_role||'').trim().toLowerCase()==='account_review_lead';}
+function isAccountReviewRestricted(){return isAccountReviewAgent()||isAccountReviewLead();}
+function canOpenAccountReview(){return isAdmin()||isAccountReviewRestricted();}
 function isOpsRestricted(){return isAgent()||isTeamLeader();}
 function canOpenVerification(){return isAdmin()||isAgent()||isTeamLeader();}
 function updateAdminAccess(){
  document.querySelectorAll('[data-page="admin"]').forEach(el=>el.style.display=isAdmin()?'flex':'none');
  document.querySelectorAll('[data-page="verification"]').forEach(el=>el.style.display=canOpenVerification()?'flex':'none');
- const restricted=isOpsRestricted();
- document.querySelectorAll('[data-page]').forEach(el=>{const page=el.dataset.page;if(restricted&&page!=='verification')el.style.display='none';else if(page==='admin')el.style.display=isAdmin()?'flex':'none';else if(page==='verification')el.style.display=canOpenVerification()?'flex':'none';});
+ document.querySelectorAll('[data-page="account-review"]').forEach(el=>el.style.display=canOpenAccountReview()?'flex':'none');
+ const opsRestricted=isOpsRestricted(),kycRestricted=isAccountReviewRestricted();
+ document.querySelectorAll('[data-page]').forEach(el=>{
+  const page=el.dataset.page;
+  if(opsRestricted&&page!=='verification'&&page!=='profile')el.style.display='none';
+  else if(kycRestricted&&page!=='account-review'&&page!=='profile')el.style.display='none';
+  else if(page==='admin')el.style.display=isAdmin()?'flex':'none';
+  else if(page==='verification')el.style.display=canOpenVerification()?'flex':'none';
+  else if(page==='account-review')el.style.display=canOpenAccountReview()?'flex':'none';
+ });
+ const restricted=opsRestricted||kycRestricted;
  const tradePill=[...document.querySelectorAll('.top-actions button')].find(el=>el.textContent.includes('My trades'));if(tradePill)tradePill.style.display=restricted?'none':'';
  const sideCard=document.querySelector('.side-card');if(sideCard)sideCard.style.display=restricted?'none':'';
- if(restricted&&currentUser)navigate('verification');
+ if(currentUser&&opsRestricted&&document.getElementById('page-verification')&&!document.getElementById('page-verification').classList.contains('active'))navigate('verification');
+ else if(currentUser&&kycRestricted&&document.getElementById('page-account-review')&&!document.getElementById('page-account-review').classList.contains('active'))navigate('account-review');
 }
 function updateAuthUI(){
  const b=document.getElementById('authButton'),a=document.getElementById('userAvatar');
@@ -385,7 +399,28 @@ function updateAuthUI(){
 async function signInUser(){if(!supabaseClient){authMessage('Supabase library did not load. Refresh and try again.');return;}const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;if(!email||!password){authMessage('Enter your email and password.');return;}authMessage('Signing in…');const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){authMessage(error.message);return;}currentUser=data.user;await loadProfile();updateAuthUI();await Promise.all([loadRemoteListings(),loadRemoteOffers(),loadRemoteMatches()]);closeModal();showToast('Signed in successfully');}
 async function registerUser(){if(!supabaseClient){authMessage('Supabase library did not load. Refresh and try again.');return;}const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value,name=document.getElementById('authName').value.trim();if(!email||!password){authMessage('Enter your email and choose a password.');return;}if(password.length<8){authMessage('Use a password with at least 8 characters.');return;}authMessage('Creating your account…');const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:'https://titang11.github.io/temo-exchange/',data:{display_name:name||email.split('@')[0],account_type:'farmer'}}});if(error){authMessage(error.message);return;}if(data.session&&data.user){currentUser=data.user;await loadProfile();updateAuthUI();await Promise.all([loadRemoteListings(),loadRemoteOffers(),loadRemoteMatches()]);closeModal();showToast('Account created and signed in');}else{authMessage('Account created. Check your email for the confirmation link, then return here and sign in.');}}
 async function signOutUser(){if(supabaseClient)await supabaseClient.auth.signOut();currentUser=null;userProfile=null;offers=[];matches=[];updateAuthUI();await Promise.all([loadRemoteListings(),loadRemoteOffers(),loadRemoteMatches()]);closeModal();showToast('Signed out');}
-async function loadProfile(){if(!supabaseClient||!currentUser)return;const {data,error}=await supabaseClient.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();if(!error&&data){userProfile=data;const loc=document.getElementById('profileLocation');if(loc)loc.textContent=data.location||'Not provided';const type=document.getElementById('profileAccountType');if(type)type.textContent=data.account_type||'Member';const since=document.getElementById('profileSince');if(since)since.textContent=data.created_at?new Date(data.created_at).toLocaleDateString():'—';}const {data:contact,error:contactError}=await supabaseClient.from('profile_whatsapp_contacts').select('whatsapp_number,is_discoverable').eq('profile_id',currentUser.id).maybeSingle();if(contactError)console.warn('TEMO WhatsApp settings:',contactError.message);const wa=document.getElementById('profileWhatsappNumber');if(wa)wa.value=contact?.whatsapp_number||'';const consent=document.getElementById('profileWhatsappDiscoverable');if(consent)consent.checked=!!contact?.is_discoverable;updateAuthUI();}
+async function loadProfile(){
+ if(!supabaseClient||!currentUser)return;
+ const {data,error}=await supabaseClient.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+ if(!error&&data){
+  userProfile=data;
+  const loc=document.getElementById('profileLocation');if(loc)loc.textContent=data.address||data.location||'Not provided';
+  const type=document.getElementById('profileAccountType');if(type)type.textContent=(data.account_type||'Member').replace(/_/g,' ')+' account';
+  const since=document.getElementById('profileSince');if(since)since.textContent=data.created_at?new Date(data.created_at).toLocaleDateString():'—';
+  const name=document.getElementById('profileName');if(name)name.textContent=data.display_name||'TEMO member';
+  const legal=document.getElementById('kycLegalName');if(legal&&!legal.value)legal.value=data.display_name||'';
+  const phone=document.getElementById('kycPhone');if(phone&&!phone.value)phone.value=data.phone||'';
+  const address=document.getElementById('kycAddress');if(address&&!address.value)address.value=data.address||data.location||'';
+  const v=document.getElementById('profileVerificationStatus');if(v){const st=data.account_verification_status||'unverified';v.textContent=st.replace(/_/g,' ');v.className='status '+(st==='verified'?'verified':st==='rejected'?'rejected':'pending');}
+ }
+ const emailStatus=document.getElementById('profileEmailStatus');if(emailStatus){const confirmed=!!currentUser.email_confirmed_at;emailStatus.textContent=confirmed?'Email confirmed':'Email not confirmed';emailStatus.className='status '+(confirmed?'verified':'pending');}
+ const {data:contact,error:contactError}=await supabaseClient.from('profile_whatsapp_contacts').select('whatsapp_number,is_discoverable').eq('profile_id',currentUser.id).maybeSingle();
+ if(contactError)console.warn('TEMO WhatsApp settings:',contactError.message);
+ const wa=document.getElementById('profileWhatsappNumber');if(wa)wa.value=contact?.whatsapp_number||'';
+ const consent=document.getElementById('profileWhatsappDiscoverable');if(consent)consent.checked=!!contact?.is_discoverable;
+ await loadMyAccountVerificationRequest();
+ updateAuthUI();
+}
 async function saveWhatsAppProfile(event){event.preventDefault();const msg=document.getElementById('whatsappProfileMessage');if(!currentUser||!supabaseClient){if(msg)msg.textContent='Please sign in first.';return;}const number=document.getElementById('profileWhatsappNumber').value.trim();const discoverable=document.getElementById('profileWhatsappDiscoverable').checked;if(discoverable&&!number){if(msg)msg.textContent='Enter a WhatsApp number before allowing matched members to contact you.';return;}if(discoverable&&digitsOnly(number).length<8){if(msg)msg.textContent='Please check the WhatsApp number. Include the country code if it is not a Botswana number.';return;}if(msg)msg.textContent='Saving…';const {error}=await supabaseClient.from('profile_whatsapp_contacts').upsert({profile_id:currentUser.id,whatsapp_number:number||null,is_discoverable:discoverable,updated_at:new Date().toISOString()},{onConflict:'profile_id'});if(error){if(msg)msg.textContent='Could not save settings: '+error.message;return;}if(msg)msg.textContent=discoverable?'Saved. Matched members can contact you on WhatsApp.':'Saved. Your WhatsApp number is not shared with matched members.';await loadRemoteMatches();}
 
 const categoryLabels={fresh_produce:'Fresh produce',grains_cereals:'Grains & cereals',livestock:'Livestock',poultry:'Poultry',dairy:'Dairy',farm_inputs:'Farm inputs',machinery:'Machinery',animal_feed:'Animal feed',processed_products:'Processed products',services:'Services',other:'Other'};
@@ -435,7 +470,7 @@ function card(x){
 function toggleQuickMenu(force){const wrap=document.getElementById('mobileMenuWrap');if(!wrap)return;const open=typeof force==='boolean'?force:!wrap.classList.contains('menu-open');wrap.classList.toggle('menu-open',open);const trigger=document.getElementById('quickMenuTrigger'),panel=document.getElementById('quickMenuPanel');if(trigger)trigger.setAttribute('aria-expanded',String(open));if(trigger)trigger.setAttribute('aria-label',open?'Close quick navigation':'Open quick navigation');if(panel)panel.setAttribute('aria-hidden',String(!open));document.body.style.overflow=open&&window.innerWidth<=720?'hidden':'';}
 function quickNavigate(page){toggleQuickMenu(false);navigate(page);}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')toggleQuickMenu(false);});
-function navigate(page){toggleQuickMenu(false);if(isOpsRestricted()&&!['verification','profile'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='saved')renderSaved();if(page==='trades')renderTrades();if(page==='admin')renderAdmin();if(page==='home')renderFeatured();if(page==='matches')renderMatches();if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
+function navigate(page){toggleQuickMenu(false);if(isAccountReviewRestricted()&&!['account-review','profile'].includes(page)){showToast('This account-review account is limited to its authorised workspace.');page='account-review';}if(isOpsRestricted()&&!['verification','profile'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='saved')renderSaved();if(page==='trades')renderTrades();if(page==='admin')renderAdmin();if(page==='home')renderFeatured();if(page==='matches')renderMatches();if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();if(page==='account-review')loadAccountReviewWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
 function updateStats(){document.getElementById('statListings').textContent=listings.length;document.getElementById('statSaved').textContent=saved.length;document.getElementById('statTrades').textContent=offers.length;document.getElementById('tradeCount').textContent=offers.length;document.getElementById('profileListings').textContent=listings.filter(x=>x.createdByMe).length}
 
 function money(v){return 'P'+Number(v||0).toLocaleString('en-BW',{minimumFractionDigits:2,maximumFractionDigits:2});}
