@@ -208,7 +208,7 @@ function card(x){
       <h3>${esc(x.title)}</h3>
       <div class="location">⌖ ${esc(x.town||x.district)}, ${esc(x.district)}</div>
       <div class="price">
-        <div><strong>${fmt(x.price)}</strong><br><small>${esc(x.quantity)} available</small></div>
+        <div><strong>${fmt(x.price)}</strong><br><small>${x.stockTrackingEnabled?`In stock · ${esc(x.quantity)} available`:`Reported quantity: ${esc(x.quantity)}`}</small></div>
         <span class="tradebadge">${x.trade==='Both'?'Cash + barter':esc(x.trade)}</span>
       </div>
       <div class="listingfoot">
@@ -260,10 +260,9 @@ async function recordSale(e){
  e.preventDefault();if(!currentUser||!supabaseClient){showToast('Sign in to record sales.');return;}
  const listingId=document.getElementById('saleListing').value,li=listingByDbId(listingId),quantity=Number(document.getElementById('saleQuantity').value),cash=Number(document.getElementById('saleCash').value||0),barter=Number(document.getElementById('saleBarter').value||0),extra=Number(document.getElementById('saleExtraCosts').value||0),buyer=document.getElementById('saleBuyer').value.trim()||null;
  if(!li||quantity<=0||cash<0||barter<0||extra<0){showToast('Check your sale details.');return;}
- const cost=Number(li.costPerUnit||0)*quantity;
- const {error}=await supabaseClient.from('temo_sales_ledger').insert({listing_id:listingId,seller_id:currentUser.id,buyer_id:buyer,quantity,cash_received:cash,barter_value:barter,cost_of_goods:cost,additional_expenses:extra});
+ const {data: saleId,error}=await supabaseClient.rpc('record_temo_completed_sale',{p_listing_id:listingId,p_quantity:quantity,p_cash_received:cash,p_barter_value:barter,p_additional_expenses:extra,p_buyer_id:buyer});
  if(error){showToast('Could not record sale: '+error.message);return;}
- document.getElementById('saleRecordForm').reset();document.getElementById('saleCash').value='0';document.getElementById('saleBarter').value='0';document.getElementById('saleExtraCosts').value='0';await loadFinance();showToast('Completed sale recorded.');
+ document.getElementById('saleRecordForm').reset();document.getElementById('saleCash').value='0';document.getElementById('saleBarter').value='0';document.getElementById('saleExtraCosts').value='0';await loadRemoteListings();await loadFinance();showToast('Completed sale recorded and inventory updated.');
 }
 async function saveExpense(e){
  e.preventDefault();if(!currentUser||!supabaseClient){showToast('Sign in to record expenses.');return;}
