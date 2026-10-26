@@ -220,7 +220,7 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
     <label><input type="checkbox" value="agricultural_organisation"> Agricultural organisation</label>
   </div>
   <button class="secondary" style="margin-top:12px" onclick="requestCapabilities()">Submit capability requests</button>
-  <div id="capabilityRequestMessage" class="smallmuted" style="margin-top:8px"></div><div class="row" style="margin-top:15px"><span class="smallmuted">Address / location</span><b style="font-size:12px;text-align:right;max-width:62%" id="profileLocation">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Member since</span><b style="font-size:12px" id="profileSince">—</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Listings created</span><b style="font-size:12px" id="profileListings">0</b></div>
+  <div id="capabilityRequestMessage" class="smallmuted" style="margin-top:8px"></div><div class="row" style="margin-top:15px"><span class="smallmuted">Phone</span><b style="font-size:12px;text-align:right;max-width:62%" id="profilePhone">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Address / location</span><b style="font-size:12px;text-align:right;max-width:62%" id="profileLocation">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Member since</span><b style="font-size:12px" id="profileSince">—</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Listings created</span><b style="font-size:12px" id="profileListings">0</b></div>
   <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
   <h3 style="color:var(--green);font-size:16px;margin:0 0 6px">WhatsApp contact preferences</h3>
   <p class="smallmuted">Add a WhatsApp number and choose whether matched members may see it. Sharing is off by default.</p>
@@ -404,7 +404,7 @@ async function loadProfile(){
  const {data,error}=await supabaseClient.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
  if(!error&&data){
   userProfile=data;
-  const loc=document.getElementById('profileLocation');if(loc)loc.textContent=data.address||data.location||'Not provided';
+  const loc=document.getElementById('profileLocation');if(loc)loc.textContent=data.address||data.location||'Not provided';const profilePhone=document.getElementById('profilePhone');if(profilePhone)profilePhone.textContent=data.phone||'Not provided';
   const type=document.getElementById('profileAccountType');if(type)type.textContent=(data.account_type||'Member').replace(/_/g,' ')+' account';
   const since=document.getElementById('profileSince');if(since)since.textContent=data.created_at?new Date(data.created_at).toLocaleDateString():'—';
   const name=document.getElementById('profileName');if(name)name.textContent=data.display_name||'TEMO member';
