@@ -86,6 +86,7 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
   <div class="side-label" style="margin-top:24px">MY BUSINESS</div>
   <button class="navbtn" data-page="create" onclick="navigate('create')"><span class="ico">＋</span>Create a listing</button>
   <button class="navbtn" data-page="profile" onclick="navigate('profile')"><span class="ico">◎</span>My profile</button>
+  <button class="navbtn" data-page="account-review" onclick="navigate('account-review')" style="display:none"><span class="ico">▤</span>Account opening & KYC</button>
   <div class="side-label" style="margin-top:24px">OPERATIONS</div>
   <button class="navbtn" data-page="verification" onclick="navigate('verification')" style="display:none"><span class="ico">✓</span>Verification tasks</button>
   <button class="navbtn" data-page="admin" onclick="navigate('admin')" style="display:none"><span class="ico">▣</span>Verification desk</button>
@@ -187,7 +188,25 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
   <div class="panel"><form id="serviceStatusForm" onsubmit="saveServiceStatus(event)"><div class="formgrid"><div class="field"><label>Current status</label><select id="serviceStatus"><option value="available">Available for work</option><option value="occupied">Occupied / currently busy</option><option value="unavailable">Unavailable</option></select></div><div class="field"><label>Service area</label><input id="serviceArea" placeholder="e.g. Gaborone, Kweneng"></div><div class="field"><label>Next available date (optional)</label><input id="serviceNextDate" type="date"></div><div class="field"><label>Notes (optional)</label><input id="serviceNotes" placeholder="e.g. Book 2 days ahead"></div></div><button class="primary" style="margin-top:15px">Save availability</button></form><div id="serviceStatusMessage" class="smallmuted" role="status" style="margin-top:10px"></div></div>
 </section>
 <section class="page" id="page-profile">
-  <div class="eyebrow">ACCOUNT & TRUST</div><div class="headingrow"><div><h1>My profile</h1><p>Your account details from Supabase appear here when signed in.</p></div></div><div class="two-col"><div class="panel"><div style="display:flex;align-items:center;gap:14px"><div class="avatar" style="width:62px;height:62px;font-size:23px">K</div><div><h2 id="profileName" style="margin:0;color:var(--green)">TEMO member</h2><p class="smallmuted" id="profileEmail">Sign in to load your account</p><span class="status pending" id="profileAccountType">Member account</span></div></div><hr style="border:0;border-top:1px solid var(--line);margin:22px 0"><button class="secondary" onclick="requestMyVerification()">Request account / business verification</button><div id="profileVerificationMessage" class="smallmuted" style="margin-top:8px"></div><hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+  <div class="eyebrow">ACCOUNT & TRUST</div><div class="headingrow"><div><h1>My profile</h1><p>Your account details from Supabase appear here when signed in.</p></div></div><div class="two-col"><div class="panel"><div style="display:flex;align-items:center;gap:14px"><div class="avatar" style="width:62px;height:62px;font-size:23px">K</div><div><h2 id="profileName" style="margin:0;color:var(--green)">TEMO member</h2><p class="smallmuted" id="profileEmail">Sign in to load your account</p><span class="status pending" id="profileAccountType">Member account</span></div></div><hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+  <div class="row" style="margin-bottom:10px;flex-wrap:wrap"><span class="smallmuted">Email confirmation</span><span class="status pending" id="profileEmailStatus">Checking…</span></div>
+  <div class="row" style="margin-bottom:18px;flex-wrap:wrap"><span class="smallmuted">Identity / business verification</span><span class="status pending" id="profileVerificationStatus">Unverified</span></div>
+  <h3 style="color:var(--green);font-size:16px;margin:0 0 6px">Account opening & KYC</h3>
+  <p class="smallmuted">Submit your legal name and contact/address details for review. Do not enter passwords, PINs, bank card details or national ID numbers in this form.</p>
+  <form id="accountVerificationForm" onsubmit="submitAccountVerification(event)">
+    <div class="formgrid">
+      <div class="field"><label for="kycLegalName">Full legal name</label><input id="kycLegalName" autocomplete="name" required placeholder="As shown on your identity document"></div>
+      <div class="field"><label for="kycPhone">Phone number</label><input id="kycPhone" type="tel" autocomplete="tel" placeholder="+267 …"></div>
+      <div class="field"><label for="kycRequestType">Account being requested</label><select id="kycRequestType" required><option value="individual">Individual member</option><option value="farmer_business">Farmer / producer</option><option value="business">Registered business</option><option value="service_provider">Service provider</option><option value="cooperative">Cooperative / farmers group</option><option value="institution">Institution / organisation</option></select></div>
+      <div class="field"><label for="kycOrganisation">Business / organisation name (if applicable)</label><input id="kycOrganisation" autocomplete="organization" placeholder="Business or group name"></div>
+      <div class="field full"><label for="kycAddress">Physical or business address</label><textarea id="kycAddress" autocomplete="street-address" required placeholder="Plot, ward/village, town, district"></textarea></div>
+      <div class="field full"><label for="kycEvidenceSummary">Additional details for the reviewer (optional)</label><textarea id="kycEvidenceSummary" placeholder="Describe what supporting evidence you can provide. Do not enter national ID numbers or confidential document details here."></textarea></div>
+    </div>
+    <button class="primary" type="submit" style="margin-top:12px">Submit account verification request</button>
+    <div id="profileVerificationMessage" class="smallmuted" role="status" style="margin-top:9px"></div>
+  </form>
+  <div class="panel" style="padding:14px;margin-top:14px;background:rgba(255,255,255,.45)"><div class="row"><span class="smallmuted">Latest request</span><span class="status pending" id="profileRequestStatus">No request yet</span></div><p id="profileRequestDetails" class="smallmuted" style="margin-bottom:0">Submit the form to begin account verification.</p></div>
+  <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
   <h3 style="color:var(--green);font-size:16px;margin:0 0 6px">Request additional capabilities</h3>
   <p class="smallmuted">One account can request several business capabilities. New capabilities remain pending until an authorised reviewer approves them.</p>
   <div class="formgrid" id="capabilityChoices">
@@ -201,7 +220,7 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
     <label><input type="checkbox" value="agricultural_organisation"> Agricultural organisation</label>
   </div>
   <button class="secondary" style="margin-top:12px" onclick="requestCapabilities()">Submit capability requests</button>
-  <div id="capabilityRequestMessage" class="smallmuted" style="margin-top:8px"></div><div class="row" style="margin-top:15px"><span class="smallmuted">Location</span><b style="font-size:12px" id="profileLocation">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Member since</span><b style="font-size:12px" id="profileSince">—</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Listings created</span><b style="font-size:12px" id="profileListings">0</b></div>
+  <div id="capabilityRequestMessage" class="smallmuted" style="margin-top:8px"></div><div class="row" style="margin-top:15px"><span class="smallmuted">Address / location</span><b style="font-size:12px;text-align:right;max-width:62%" id="profileLocation">Not provided</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Member since</span><b style="font-size:12px" id="profileSince">—</b></div><div class="row" style="margin-top:15px"><span class="smallmuted">Listings created</span><b style="font-size:12px" id="profileListings">0</b></div>
   <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
   <h3 style="color:var(--green);font-size:16px;margin:0 0 6px">WhatsApp contact preferences</h3>
   <p class="smallmuted">Add a WhatsApp number and choose whether matched members may see it. Sharing is off by default.</p>
@@ -213,6 +232,21 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
     <div id="whatsappProfileMessage" class="smallmuted" role="status" style="margin-top:8px"></div>
   </form>
   <div class="notice">Trust labels are not endorsements. Confirm identity, quantity, quality and terms before exchanging goods or money.</div></div><div class="panel"><h2 style="color:var(--green);font-size:18px;margin-top:0">Your business checklist</h2><p class="smallmuted">Before a commercial launch, the product will need:</p><div class="tradecard"><h3>Account security</h3><p>Secure sign-in, recovery and role-based access.</p></div><div class="tradecard"><h3>Asset verification</h3><p>Evidence, field checks, review decisions and an audit trail.</p></div><div class="tradecard"><h3>Safe trading process</h3><p>Clear terms, dispute handling and approved payment/escrow partners if enabled.</p></div></div></div>
+</section>
+<section class="page" id="page-account-review">
+  <div class="eyebrow">RESTRICTED OPERATIONS WORKSPACE</div>
+  <div class="headingrow"><div><h1>Account opening & KYC</h1><p>Review account applications, request missing information and record decisions.</p></div><button class="secondary" onclick="loadAccountReviewWorkspace()">Refresh queue</button></div>
+  <div class="notice">Only assigned account reviewers, account review leads and administrators can access this workspace. Account review agents can assess applications and request information; account review leads or administrators make final approval/rejection decisions. Use an approved secure process for identity evidence.</div>
+  <div class="statgrid">
+    <div class="stat"><div class="label">PENDING</div><strong id="kycPendingCount">0</strong><small>Awaiting review</small></div>
+    <div class="stat"><div class="label">IN REVIEW</div><strong id="kycReviewCount">0</strong><small>Being assessed</small></div>
+    <div class="stat"><div class="label">NEEDS INFORMATION</div><strong id="kycInfoCount">0</strong><small>Waiting for applicant</small></div>
+    <div class="stat"><div class="label">DECIDED</div><strong id="kycDecidedCount">0</strong><small>Approved or rejected</small></div>
+  </div>
+  <div class="panel">
+    <div class="row" style="margin-bottom:12px;flex-wrap:wrap"><h2 style="font-size:18px;color:var(--green);margin:0">Account applications</h2><span class="smallmuted" id="kycQueueCaption">Loading…</span></div>
+    <div class="tablewrap"><table class="table" style="min-width:950px"><thead><tr><th>Applicant</th><th>Requested account</th><th>Contact / address</th><th>Status / notes</th><th>Assign reviewer</th><th>Review action</th></tr></thead><tbody id="accountReviewRows"><tr><td colspan="6">Loading applications…</td></tr></tbody></table></div>
+  </div>
 </section>
 <section class="page" id="page-verification">
   <div class="eyebrow">RESTRICTED OPERATIONS WORKSPACE</div>
@@ -275,6 +309,7 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
       <button class="quick-item" data-page="services" onclick="quickNavigate('services')"><span>◷</span><b>Services</b></button>
       <button class="quick-item" data-page="create" onclick="quickNavigate('create')"><span>＋</span><b>List an asset</b></button>
       <button class="quick-item" data-page="profile" onclick="quickNavigate('profile')"><span>◎</span><b>My profile</b></button>
+      <button class="quick-item" data-page="account-review" onclick="quickNavigate('account-review')" style="display:none"><span>▤</span><b>Account opening & KYC</b></button>
       <button class="quick-item" data-page="verification" onclick="quickNavigate('verification')" style="display:none"><span>✓</span><b>My tasks</b></button>
       <button class="quick-item" data-page="admin" onclick="quickNavigate('admin')" style="display:none"><span>◆</span><b>Team desk</b></button>
       <button class="quick-item quick-account" id="mobileAuthButton" onclick="openAuth()"><span>♙</span><b id="mobileAuthLabel">Account / sign in</b></button>
