@@ -113,6 +113,26 @@
   </form>
   <div class="notice">Trust labels are not endorsements. Confirm identity, quantity, quality and terms before exchanging goods or money.</div></div><div class="panel"><h2 style="color:var(--green);font-size:18px;margin-top:0">Your business checklist</h2><p class="smallmuted">Before a commercial launch, the product will need:</p><div class="tradecard"><h3>Account security</h3><p>Secure sign-in, recovery and role-based access.</p></div><div class="tradecard"><h3>Asset verification</h3><p>Evidence, field checks, review decisions and an audit trail.</p></div><div class="tradecard"><h3>Safe trading process</h3><p>Clear terms, dispute handling and approved payment/escrow partners if enabled.</p></div></div></div>
 </section>
+<section class="page" id="page-verification">
+  <div class="eyebrow">RESTRICTED OPERATIONS WORKSPACE</div>
+  <div class="headingrow"><div><h1 id="verificationHeading">Verification workspace</h1><p id="verificationSubheading">Only your authorised tasks and performance are shown here.</p></div><span class="status pending" id="verificationAccessBadge">Restricted access</span></div>
+  <div class="notice">Verification agents cannot browse the marketplace or trading area. Assignments are allocated according to availability and open workload. Tasks unactioned for 48 hours are escalated to a team leader or administrator for a decision; the system does not automatically reassign them.</div>
+  <div class="statgrid">
+    <div class="stat"><div class="label">MY ASSIGNED TASKS</div><strong id="verifyAssignedCount">0</strong><small>Visible to your authorised role</small></div>
+    <div class="stat"><div class="label">IN PROGRESS</div><strong id="verifyInProgressCount">0</strong><small>Tasks started</small></div>
+    <div class="stat"><div class="label">COMPLETED / SUBMITTED</div><strong id="verifyCompletedCount">0</strong><small>Reports submitted or decided</small></div>
+    <div class="stat"><div class="label">NEEDS ATTENTION</div><strong id="verifyAttentionCount">0</strong><small>Unassigned or escalated tasks</small></div>
+  </div>
+  <div class="panel">
+    <div class="row" style="margin-bottom:14px;flex-wrap:wrap"><h2 style="font-size:18px;color:var(--green);margin:0">My assigned tasks</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="exportVerificationReport('xlsx')">Export Excel</button><button class="secondary" onclick="exportVerificationReport('csv')">Export CSV</button><button class="secondary" onclick="renderVerificationWorkspace()">Refresh</button></div></div>
+    <div id="verificationTaskList"><div class="empty"><strong>Loading tasks…</strong>Sign in with an authorised verification account.</div></div>
+  </div>
+  <div class="panel" id="leaderTaskPanel" style="margin-top:16px;display:none">
+    <div class="row" style="margin-bottom:14px;flex-wrap:wrap"><h2 style="font-size:18px;color:var(--green);margin:0">Team allocation & escalations</h2><span class="smallmuted" id="leaderTaskSummary">Leader view</span></div>
+    <div id="leaderNotifications"></div>
+    <div class="tablewrap"><table class="table"><thead><tr><th>Task</th><th>Status</th><th>Assigned agent</th><th>Age / escalation</th><th>Reassign / return</th></tr></thead><tbody id="leaderTaskRows"></tbody></table></div>
+  </div>
+</section>
 <section class="page" id="page-admin">
   <div class="eyebrow">OPERATIONS WORKSPACE</div><div class="headingrow"><div><h1>Verification desk</h1><p>Review listings if you are an authorised administrator.</p></div><span class="status pending" id="adminRoleStatus">Restricted access</span></div><div class="notice">Only accounts whose Supabase profile has the authorised admin role should access this area. Database row-level security must also restrict review actions; hiding this page alone is not security.</div><div class="panel"><div class="row" style="margin-bottom:14px"><h2 style="font-size:18px;color:var(--green);margin:0">Listing review queue</h2><span class="smallmuted" id="queueCount">0 awaiting review</span></div><div class="tablewrap"><table class="table"><thead><tr><th>Asset</th><th>Seller</th><th>Location</th><th>Value</th><th>Status</th><th>Action</th></tr></thead><tbody id="adminRows"></tbody></table></div></div>
 </section>
