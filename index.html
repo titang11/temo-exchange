@@ -797,6 +797,7 @@ async function submitAccountVerification(event){
  await loadProfile();
 }
 async function loadMyAccountVerificationRequest(){
+ myAccountVerificationRequestId=null;myAccountVerificationRequestStatus=null;
  if(!currentUser||!supabaseClient)return;
  const {data,error}=await supabaseClient.from('account_verification_requests').select('id,request_type,status,created_at,updated_at,reviewer_notes').eq('profile_id',currentUser.id).order('created_at',{ascending:false}).limit(1).maybeSingle();
  const badge=document.getElementById('profileRequestStatus'),details=document.getElementById('profileRequestDetails'),form=document.getElementById('accountVerificationForm');
