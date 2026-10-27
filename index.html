@@ -71,6 +71,139 @@ body{background:radial-gradient(ellipse at 12% 8%,#dcefe8 0,transparent 34%),rad
 @media(max-width:720px){#page-staff-messages .two-col,#page-network .two-col{grid-template-columns:1fr}.quick-menu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
 .profile-accordion{border:1px solid var(--line);border-radius:13px;margin:18px 0;background:rgba(255,255,255,.45);overflow:hidden}.profile-accordion summary{cursor:pointer;list-style:none;padding:14px 15px;font-size:12px;font-weight:850;color:var(--green);display:flex;align-items:center;justify-content:space-between}.profile-accordion summary::-webkit-details-marker{display:none}.profile-accordion summary:after{content:'＋';font-size:17px}.profile-accordion[open] summary:after{content:'−'}.profile-accordion-body{padding:0 15px 15px}
+
+/* TEMO Exchange — glassmorphism interaction refresh
+   Presentation-only overrides: preserve existing menu, markup, Supabase and app logic. */
+:root{
+  --green:#092c35;
+  --green2:#147363;
+  --gold:#c9f36a;
+  --cream:#eaf2f3;
+  --paper:rgba(255,255,255,.68);
+  --ink:#142b32;
+  --muted:#60777d;
+  --line:rgba(105,153,159,.25);
+  --shadow:0 18px 48px rgba(7,42,50,.11);
+  --temo-glass:rgba(248,253,253,.66);
+  --temo-glass-strong:rgba(250,254,254,.82);
+}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(ellipse at 8% 7%,rgba(182,235,218,.72) 0,transparent 34%),
+    radial-gradient(ellipse at 92% 14%,rgba(195,222,241,.72) 0,transparent 33%),
+    radial-gradient(ellipse at 65% 95%,rgba(208,238,185,.42) 0,transparent 38%),
+    linear-gradient(135deg,#edf5f5 0%,#e4eff0 52%,#eef4e9 100%);
+  background-attachment:fixed;
+}
+.topbar{
+  background:linear-gradient(112deg,rgba(5,31,41,.94),rgba(8,75,69,.90));
+  border-bottom:1px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(24px) saturate(145%);
+  -webkit-backdrop-filter:blur(24px) saturate(145%);
+  box-shadow:0 10px 34px rgba(4,34,43,.18);
+}
+.brandmark{
+  background:linear-gradient(145deg,#d9ff91,#bfe9d5);
+  color:#073a38;
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:0 5px 22px rgba(201,243,106,.22);
+}
+.sidebar{
+  background:rgba(243,250,250,.48);
+  border-right:1px solid rgba(255,255,255,.72);
+  backdrop-filter:blur(20px) saturate(130%);
+  -webkit-backdrop-filter:blur(20px) saturate(130%);
+}
+.navbtn{transition:background .22s ease,color .22s ease,transform .22s ease,box-shadow .22s ease}
+.navbtn:hover{transform:translateX(3px);background:rgba(255,255,255,.72);box-shadow:0 5px 16px rgba(8,67,67,.06)}
+.navbtn.active{
+  color:#075448;
+  background:linear-gradient(110deg,rgba(95,195,155,.19),rgba(255,255,255,.78));
+  border:1px solid rgba(65,157,128,.22);
+  box-shadow:inset 3px 0 #48b98e,0 5px 18px rgba(9,70,62,.045);
+}
+.hero{
+  background:linear-gradient(125deg,rgba(4,38,48,.97),rgba(8,88,75,.94) 65%,rgba(31,119,91,.91));
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 24px 58px rgba(7,55,58,.18);
+}
+.hero:after{border-color:rgba(255,255,255,.18)}
+.stat,.panel,.listing,.tradecard{
+  background:linear-gradient(145deg,rgba(255,255,255,.83),rgba(247,253,252,.57));
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:0 10px 32px rgba(13,65,69,.065),inset 0 1px 0 rgba(255,255,255,.72);
+  backdrop-filter:blur(16px) saturate(125%);
+  -webkit-backdrop-filter:blur(16px) saturate(125%);
+}
+.stat,.panel,.tradecard,.listing{transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease}
+.stat:hover,.panel:hover,.tradecard:hover{
+  border-color:rgba(105,191,161,.46);
+  box-shadow:0 15px 38px rgba(13,65,69,.09),inset 0 1px 0 rgba(255,255,255,.85);
+}
+.listing:hover{transform:translateY(-4px);border-color:rgba(105,191,161,.48);box-shadow:0 18px 40px rgba(13,65,69,.12)}
+.primary{
+  background:linear-gradient(115deg,#0a514c,#147866);
+  box-shadow:0 7px 18px rgba(8,77,69,.17);
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.primary:hover{background:linear-gradient(115deg,#0c6256,#198a70);transform:translateY(-1px);box-shadow:0 10px 24px rgba(8,77,69,.22)}
+.hero .primary,.side-card button{background:linear-gradient(115deg,#d8ff88,#c1ee68);color:#103b32}
+.secondary,.chip,.search,.select,.field input,.field select,.field textarea,.tradechoice label{
+  border-color:rgba(113,157,157,.28);
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.secondary:hover,.chip:hover{border-color:rgba(42,145,115,.45);background:rgba(255,255,255,.94)}
+.chip.active{background:linear-gradient(115deg,#0b514b,#147765);border-color:transparent}
+.search:focus,.field input:focus,.field select:focus,.field textarea:focus,.select:focus{
+  border-color:#4cae91;
+  box-shadow:0 0 0 3px rgba(72,185,142,.15);
+  background:rgba(255,255,255,.96);
+}
+.listingvisual{background-image:linear-gradient(135deg,rgba(255,255,255,.08),rgba(10,65,56,.04))}
+.badge,.bookmark{box-shadow:0 4px 14px rgba(8,40,43,.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.tradebadge{background:rgba(190,238,205,.7);color:#1c674c}
+.status{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.modalback.show{backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.modal{
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(239,249,246,.94));
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:0 30px 90px rgba(0,26,31,.28);
+  animation:temoModalIn .24s cubic-bezier(.2,.8,.2,1) both;
+}
+.toast{background:linear-gradient(115deg,#073e3d,#147764);border:1px solid rgba(255,255,255,.18)}
+.mobilebar{
+  background:rgba(248,253,252,.83);
+  border-top:1px solid rgba(255,255,255,.86);
+  box-shadow:0 -10px 32px rgba(8,52,55,.08);
+  backdrop-filter:blur(24px) saturate(150%);
+  -webkit-backdrop-filter:blur(24px) saturate(150%);
+}
+.mobilebar button{border-radius:12px;transition:color .18s ease,background .18s ease,transform .18s ease}
+.mobilebar button:active{transform:scale(.96)}
+.mobilebar button.active{color:#08705d;background:rgba(108,207,163,.13)}
+button:focus-visible,[role="button"]:focus-visible,a:focus-visible{
+  outline:3px solid rgba(78,179,142,.65);
+  outline-offset:3px;
+}
+.page.active{animation:temoPageIn .26s ease both}
+@keyframes temoPageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes temoModalIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:720px){
+  .sidebar{display:none}
+  .main{padding-top:18px}
+  .hero{border-radius:19px}
+  .stat,.panel,.listing,.tradecard{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .mobilebar{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
 </style>
 </head>
 <body>
