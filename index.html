@@ -225,26 +225,36 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible{
 @media(max-width:720px){.brand-copy small{display:none}.profile-menu{position:fixed;right:14px;top:72px;min-width:220px}}
 
 /* Overview photo-led experience: photographic agricultural background with readable teal glass surfaces. */
-#page-home{position:relative;isolation:isolate;padding:clamp(14px,2vw,26px);margin:-10px;border-radius:22px;overflow:hidden;background:#062e2b}
+/* Brighter Overview: use the agricultural field image with a soft daylight wash. */
+#page-home{position:relative;isolation:isolate;padding:clamp(14px,2vw,26px);margin:-10px;border-radius:22px;overflow:hidden;background:#eaf3e7;color:#173c2c}
 #page-home:before{content:"";position:absolute;inset:0;z-index:-2;background-image:url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85");background-size:cover;background-position:center 45%;transform:scale(1.01)}
-#page-home:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(3,35,32,.74) 0%,rgba(3,35,32,.82) 48%,rgba(3,35,32,.92) 100%)}
-#page-home .eyebrow,#page-home .headingrow h1,#page-home .headingrow p,#page-home .sectionhead h2,#page-home .sectionhead span{color:#f2fbf6}
-#page-home .panel,#page-home .hero{background:rgba(3,45,41,.70);color:#f2fbf6;border:1px solid rgba(126,255,204,.25);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 35px rgba(0,0,0,.18)}
-#page-home .panel p,#page-home .smallmuted{color:#d6e9e1}
-#page-home .hero{background:linear-gradient(110deg,rgba(3,48,42,.88),rgba(9,85,65,.54)),url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1800&q=85") center/cover}
-#page-home .hero h2{color:#fff}
-#page-home .hero p{color:#e1f0e8}
+#page-home:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(245,251,239,.68) 0%,rgba(235,246,231,.82) 52%,rgba(225,241,222,.91) 100%)}
+#page-home .eyebrow,#page-home .headingrow h1,#page-home .headingrow p,#page-home .sectionhead h2,#page-home .sectionhead span{color:#163e2c}
+#page-home .panel,#page-home .hero{background:rgba(250,255,247,.78);color:#173c2c;border:1px solid rgba(255,255,255,.86);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 35px rgba(20,60,37,.10)}
+#page-home .panel p,#page-home .smallmuted{color:#4f6857}
+#page-home .hero{background:linear-gradient(110deg,rgba(239,250,231,.86),rgba(213,239,192,.68)),url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1800&q=85") center/cover}
+#page-home .hero h2{color:#17452f}
+#page-home .hero p{color:#365b43}
+#page-home .hero .primary{background:#b8e96d;color:#16452e;border:1px solid rgba(22,69,46,.12)}
 #page-home .hero-art{display:none}
 #page-home .sectionhead{position:relative}
-#page-home .panel h3{color:#b8f58c!important}
+#page-home .panel h3{color:#246a3d!important}
+.temo-gear-logo{display:block;width:100%;height:100%;overflow:visible}
+.brandmark{display:grid;place-items:center;padding:4px;background:linear-gradient(145deg,#d9ff91,#bfe9d5);color:#0b5547;border-radius:12px}
+.brandmark .temo-gear-logo{width:100%;height:100%}
+.avatar .temo-gear-logo{width:25px;height:25px}
+#userAvatar{background:linear-gradient(145deg,#d9ff91,#bfe9d5);color:#0b5547;border:1px solid rgba(255,255,255,.7);padding:5px}
+.quick-menu-trigger{background:linear-gradient(145deg,#d9ff91,#bfe9d5)!important;color:#0b5547!important}
+.quick-trigger-icon{display:block;width:32px;height:32px;transition:transform .3s ease}
+.menu-open .quick-trigger-icon{transform:rotate(0deg)!important}
 @media(max-width:720px){#page-home{margin:0;padding:14px;border-radius:16px}#page-home .hero{min-height:210px}}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="topbar">
-  <button class="brand brand-home" type="button" onclick="navigate('home')" aria-label="TEMO Exchange home" title="Go to home"><span class="brandmark">T</span><span class="brand-copy">TEMO EXCHANGE<small>TURNING ASSETS INTO OPPORTUNITY</small></span></button>
-  <div class="top-actions"><button class="pill" onclick="showToast('Botswana pilot · Supabase connected when status is online')">🇧🇼 Botswana pilot</button><button class="pill" onclick="navigate('trades')">My trades <span id="tradeCount">0</span></button><button class="pill" id="authButton" onclick="openAuth()">Sign in / Register</button><div class="profile-menu-wrap"><button class="avatar" id="userAvatar" type="button" title="Open profile menu" aria-label="Open profile menu" aria-haspopup="true" aria-expanded="false" onclick="toggleProfileMenu()">?</button><div class="profile-menu" id="profileMenu" role="menu" aria-label="Profile menu" hidden><button type="button" role="menuitem" onclick="profileMenuNavigate('profile')">◎ <span>My profile</span></button><button type="button" role="menuitem" onclick="profileMenuNavigate('account-review')">✓ <span>Account &amp; verification</span></button><button type="button" role="menuitem" onclick="openAuth()">↗ <span>Sign in / Register</span></button></div></div></div>
+  <button class="brand brand-home" type="button" onclick="navigate('home')" aria-label="TEMO Exchange home" title="Go to home"><span class="brandmark"><svg class="temo-gear-logo" viewBox="0 0 100 100" role="img" aria-label="TEMO Exchange logo"><path d="M44 5h12l3 10a36 36 0 0 1 8 3l8-6 9 9-6 8a36 36 0 0 1 3 8l10 3v12l-10 3a36 36 0 0 1-3 8l6 8-9 9-8-6a36 36 0 0 1-8 3l-3 10H44l-3-10a36 36 0 0 1-8-3l-8 6-9-9 6-8a36 36 0 0 1-3-8L9 52V40l10-3a36 36 0 0 1 3-8l-6-8 9-9 8 6a36 36 0 0 1 8-3z" fill="currentColor"/><circle cx="50" cy="46" r="28" fill="#f5fbf4"/><path d="M32 31h36v8H54v30h-9V39H32z" fill="#0b5547"/><path d="M33 57c5 7 11 10 18 10 8 0 14-4 17-10" fill="none" stroke="#a6d85c" stroke-width="4" stroke-linecap="round"/></svg></span><span class="brand-copy">TEMO EXCHANGE<small>TURNING ASSETS INTO OPPORTUNITY</small></span></button>
+  <div class="top-actions"><button class="pill" onclick="showToast('Botswana pilot · Supabase connected when status is online')">🇧🇼 Botswana pilot</button><button class="pill" onclick="navigate('trades')">My trades <span id="tradeCount">0</span></button><button class="pill" id="authButton" onclick="openAuth()">Sign in / Register</button><div class="profile-menu-wrap"><button class="avatar" id="userAvatar" type="button" title="Open profile menu" aria-label="Open profile menu" aria-haspopup="true" aria-expanded="false" onclick="toggleProfileMenu()"><svg class="temo-gear-logo" viewBox="0 0 100 100" role="img" aria-label="TEMO Exchange logo"><path d="M44 5h12l3 10a36 36 0 0 1 8 3l8-6 9 9-6 8a36 36 0 0 1 3 8l10 3v12l-10 3a36 36 0 0 1-3 8l6 8-9 9-8-6a36 36 0 0 1-8 3l-3 10H44l-3-10a36 36 0 0 1-8-3l-8 6-9-9 6-8a36 36 0 0 1-3-8L9 52V40l10-3a36 36 0 0 1 3-8l-6-8 9-9 8 6a36 36 0 0 1 8-3z" fill="currentColor"/><circle cx="50" cy="46" r="28" fill="#f5fbf4"/><path d="M32 31h36v8H54v30h-9V39H32z" fill="#0b5547"/><path d="M33 57c5 7 11 10 18 10 8 0 14-4 17-10" fill="none" stroke="#a6d85c" stroke-width="4" stroke-linecap="round"/></svg></button><div class="profile-menu" id="profileMenu" role="menu" aria-label="Profile menu" hidden><button type="button" role="menuitem" onclick="profileMenuNavigate('profile')">◎ <span>My profile</span></button><button type="button" role="menuitem" onclick="profileMenuNavigate('account-review')">✓ <span>Account &amp; verification</span></button><button type="button" role="menuitem" onclick="openAuth()">↗ <span>Sign in / Register</span></button></div></div></div>
 </header>
 <div class="layout">
 <aside class="sidebar">
@@ -580,7 +590,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible{
       <button class="quick-item quick-account" id="mobileAuthButton" onclick="openAuth()"><span>♙</span><b id="mobileAuthLabel">Account / sign in</b></button>
     </div>
   </div>
-  <button class="quick-menu-trigger" id="quickMenuTrigger" onclick="toggleQuickMenu()" aria-label="Open quick navigation" aria-expanded="false" aria-controls="quickMenuPanel"><span class="quick-trigger-icon">＋</span><span class="quick-trigger-label">MENU</span></button>
+  <button class="quick-menu-trigger" id="quickMenuTrigger" onclick="toggleQuickMenu()" aria-label="Open quick navigation" aria-expanded="false" aria-controls="quickMenuPanel"><span class="quick-trigger-icon"><svg class="temo-gear-logo" viewBox="0 0 100 100" role="img" aria-label="TEMO Exchange logo"><path d="M44 5h12l3 10a36 36 0 0 1 8 3l8-6 9 9-6 8a36 36 0 0 1 3 8l10 3v12l-10 3a36 36 0 0 1-3 8l6 8-9 9-8-6a36 36 0 0 1-8 3l-3 10H44l-3-10a36 36 0 0 1-8-3l-8 6-9-9 6-8a36 36 0 0 1-3-8L9 52V40l10-3a36 36 0 0 1 3-8l-6-8 9-9 8 6a36 36 0 0 1 8-3z" fill="currentColor"/><circle cx="50" cy="46" r="28" fill="#f5fbf4"/><path d="M32 31h36v8H54v30h-9V39H32z" fill="#0b5547"/><path d="M33 57c5 7 11 10 18 10 8 0 14-4 17-10" fill="none" stroke="#a6d85c" stroke-width="4" stroke-linecap="round"/></svg></span><span class="quick-trigger-label">MENU</span></button>
 </div>
 </div>
 <div class="modalback" id="modalBack" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div><div class="toast" id="toast"></div>
