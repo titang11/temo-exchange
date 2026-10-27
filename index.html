@@ -289,6 +289,9 @@ button,input,select,textarea{max-width:100%}
  .profile-avatar{width:36px;height:36px;min-width:36px}
 }
 
+
+.profile-avatar .avatar-label{display:grid;place-items:center;width:100%;height:100%;font-size:13px;font-weight:900;letter-spacing:.02em;line-height:1}
+.profile-avatar .avatar-label:only-child{min-width:0}
 </style>
 </head>
 <body>
@@ -745,14 +748,16 @@ function updateAuthUI(){
   b.textContent='Sign out';b.onclick=signOutUser;
   if(mobileLabel)mobileLabel.textContent='Account';
   if(mobileButton)mobileButton.onclick=()=>openAuth();
-  const label=(userProfile&&userProfile.display_name)||currentUser.email||'User';
-  a.textContent=label.trim().charAt(0).toUpperCase();a.title=label;
-  if(nameEl)nameEl.textContent=label;if(emailEl)emailEl.textContent=currentUser.email||'Signed-in member';
+  const label=(userProfile&&userProfile.display_name)||currentUser.user_metadata?.display_name||currentUser.email||currentUser.phone||'TEMO member';
+  const parts=label.trim().split(/\\s+/).filter(Boolean);
+  const initials=(parts.length>1?parts[0][0]+parts[parts.length-1][0]:parts[0].slice(0,2)).toUpperCase();
+  a.innerHTML='<span class="avatar-label">'+esc(initials)+'</span>';a.title=label;a.setAttribute('aria-label','Open profile menu for '+label);
+  if(nameEl)nameEl.textContent=label;if(emailEl)emailEl.textContent=currentUser.email||currentUser.phone||'Signed-in member';
  }else{
   b.textContent='Sign in / Register';b.onclick=()=>openAuth();
   if(mobileLabel)mobileLabel.textContent='Sign in';
   if(mobileButton)mobileButton.onclick=()=>openAuth();
-  a.textContent='?';a.title='Not signed in';
+  a.innerHTML='<span class="avatar-label">?</span>';a.title='Not signed in';a.setAttribute('aria-label','Open profile menu; not signed in');
   if(nameEl)nameEl.textContent='TEMO member';if(emailEl)emailEl.textContent='Sign in to load your account';
  }
  updateAdminAccess();
