@@ -223,6 +223,21 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible{
 .profile-menu button{width:100%;display:flex;align-items:center;gap:10px;border:0;border-radius:10px;padding:11px 12px;background:transparent;color:var(--green);font:inherit;font-size:12px;font-weight:750;text-align:left;cursor:pointer}
 .profile-menu button:hover,.profile-menu button:focus-visible{background:rgba(20,115,99,.1);outline:none}
 @media(max-width:720px){.brand-copy small{display:none}.profile-menu{position:fixed;right:14px;top:72px;min-width:220px}}
+
+/* Overview photo-led experience: photographic agricultural background with readable teal glass surfaces. */
+#page-home{position:relative;isolation:isolate;padding:clamp(14px,2vw,26px);margin:-10px;border-radius:22px;overflow:hidden;background:#062e2b}
+#page-home:before{content:"";position:absolute;inset:0;z-index:-2;background-image:url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85");background-size:cover;background-position:center 45%;transform:scale(1.01)}
+#page-home:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(3,35,32,.74) 0%,rgba(3,35,32,.82) 48%,rgba(3,35,32,.92) 100%)}
+#page-home .eyebrow,#page-home .headingrow h1,#page-home .headingrow p,#page-home .sectionhead h2,#page-home .sectionhead span{color:#f2fbf6}
+#page-home .panel,#page-home .hero{background:rgba(3,45,41,.70);color:#f2fbf6;border:1px solid rgba(126,255,204,.25);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 35px rgba(0,0,0,.18)}
+#page-home .panel p,#page-home .smallmuted{color:#d6e9e1}
+#page-home .hero{background:linear-gradient(110deg,rgba(3,48,42,.88),rgba(9,85,65,.54)),url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1800&q=85") center/cover}
+#page-home .hero h2{color:#fff}
+#page-home .hero p{color:#e1f0e8}
+#page-home .hero-art{display:none}
+#page-home .sectionhead{position:relative}
+#page-home .panel h3{color:#b8f58c!important}
+@media(max-width:720px){#page-home{margin:0;padding:14px;border-radius:16px}#page-home .hero{min-height:210px}}
 </style>
 </head>
 <body>
