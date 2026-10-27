@@ -475,7 +475,13 @@ async function verifyPhoneCode(){
  authMessage('Verifying code…');
  const {data,error}=await supabaseClient.auth.verifyOtp({phone,token,type:'sms'});
  if(error){authMessage('Phone verification failed: '+error.message);return;}
- currentUser=data.user;await loadProfile();updateAuthUI();await Promise.all([loadRemoteListings(),loadRemoteOffers(),loadRemoteMatches()]);closeModal();showToast('Phone verified and signed in');
+ currentUser=data.user;
+ // Activate an admin-invited staff role only after Supabase confirms this exact phone is verified.
+ const {data:activation,error:activationError}=await supabaseClient.functions.invoke('activate-staff-phone',{body:{}});
+ await loadProfile();updateAuthUI();await Promise.all([loadRemoteListings(),loadRemoteOffers(),loadRemoteMatches()]);closeModal();
+ if(activation?.success){showToast('Phone verified. Staff access activated.');}
+ else if(activationError && activationError.context?.status!==404){console.warn('Staff activation was not completed:',activationError.message);showToast('Signed in. If this is an invited staff account, contact the administrator to complete activation.');}
+ else {showToast('Phone verified and signed in');}
 }
 
 function openAuth(mode='signin'){
