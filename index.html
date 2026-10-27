@@ -223,6 +223,56 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible{
 .profile-menu button{width:100%;display:flex;align-items:center;gap:10px;border:0;border-radius:10px;padding:11px 12px;background:transparent;color:var(--green);font:inherit;font-size:12px;font-weight:750;text-align:left;cursor:pointer}
 .profile-menu button:hover,.profile-menu button:focus-visible{background:rgba(20,115,99,.1);outline:none}
 @media(max-width:720px){.brand-copy small{display:none}.profile-menu{position:fixed;right:14px;top:72px;min-width:220px}}
+
+/* TEMO Exchange 2.0 — visible agritech refresh */
+:root{
+ --green:#073b3a;--green2:#0d625b;--gold:#c7f36b;--cream:#edf5ef;
+ --paper:rgba(255,255,255,.78);--ink:#122c29;--muted:#637b75;
+ --line:rgba(20,92,78,.15);--shadow:0 18px 50px rgba(5,53,47,.12);
+ --lime:#c7f36b;--teal:#0d625b;
+}
+body{
+ background:
+  linear-gradient(135deg,rgba(237,247,239,.94),rgba(225,241,232,.86)),
+  url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85') center/cover fixed;
+ color:var(--ink);
+}
+.topbar{background:rgba(5,48,47,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 10px 35px rgba(3,38,35,.18)}
+.brandmark,.brand-home-ico{background:var(--lime);color:#073b3a;box-shadow:0 0 22px rgba(199,243,107,.22)}
+.layout{max-width:1600px}
+.sidebar{background:rgba(248,255,250,.65);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-right-color:rgba(13,98,91,.13)}
+.navbtn{transition:background .22s ease,color .22s ease,transform .22s ease}
+.navbtn.active,.navbtn:hover{background:rgba(13,98,91,.12);color:#07534d}
+.navbtn.active{box-shadow:inset 3px 0 0 var(--teal)}
+.main{background:linear-gradient(135deg,rgba(246,252,247,.22),rgba(231,245,235,.34))}
+.hero{background:linear-gradient(115deg,rgba(4,51,49,.96),rgba(8,94,82,.88)),url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=85') center/cover;border:1px solid rgba(255,255,255,.22);border-radius:28px;box-shadow:0 24px 65px rgba(5,53,47,.2)}
+.hero:after{border-color:rgba(199,243,107,.28);box-shadow:0 0 0 32px rgba(199,243,107,.07),0 0 0 70px rgba(255,255,255,.045)}
+.hero .primary,.side-card button{background:var(--lime);color:#073b3a;box-shadow:0 8px 24px rgba(199,243,107,.16)}
+.primary{background:linear-gradient(135deg,#0b6259,#073b3a);border-radius:12px;transition:transform .2s ease,box-shadow .2s ease}
+.primary:hover{background:#0d7569;transform:translateY(-1px);box-shadow:0 10px 24px rgba(7,59,58,.2)}
+.secondary,.pill,.chip,.search,.select,.field input,.field select,.field textarea{transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+.stat,.panel,.listing,.empty,.side-card{background:rgba(255,255,255,.76);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 34px rgba(7,59,58,.07)}
+.stat{border-radius:20px;transition:transform .22s ease,box-shadow .22s ease}
+.stat:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(7,59,58,.12)}
+.stat strong,.headingrow h1,.sectionhead h2,.listing h3,.price strong{color:#084b46}
+.listing{border-radius:22px;overflow:hidden;transition:transform .24s ease,box-shadow .24s ease}
+.listing:hover{transform:translateY(-5px);box-shadow:0 22px 46px rgba(7,59,58,.15)}
+.listingvisual{background-image:linear-gradient(135deg,rgba(199,243,107,.16),rgba(13,98,91,.12));}
+.chip.active{background:#0b6259;border-color:#0b6259}
+.side-card{background:linear-gradient(145deg,#073b3a,#0b6259);color:white;border:1px solid rgba(255,255,255,.12)}
+.side-card h4{color:white}
+.profile-menu{background:rgba(248,255,250,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.8);box-shadow:0 20px 55px rgba(3,38,35,.2)}
+@media(max-width:720px){
+ body{background-attachment:scroll}
+ .topbar{height:68px;padding-inline:14px}
+ .main{padding-top:20px}
+ .hero{border-radius:22px;box-shadow:0 16px 38px rgba(5,53,47,.17)}
+ .stat,.panel,.listing{border-radius:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
 </style>
 </head>
 <body>
