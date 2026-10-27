@@ -183,6 +183,12 @@ body{
   -webkit-backdrop-filter:blur(24px) saturate(150%);
 }
 .mobilebar button{border-radius:12px;transition:color .18s ease,background .18s ease,transform .18s ease}
+/* Existing expandable mobile menu: glass finish, existing behaviour unchanged. */
+.quick-menu-panel{background:linear-gradient(145deg,rgba(249,255,253,.94),rgba(220,242,234,.88));border:1px solid rgba(255,255,255,.9);box-shadow:0 25px 70px rgba(5,42,49,.24),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(28px) saturate(155%);-webkit-backdrop-filter:blur(28px) saturate(155%)}
+.mobile-menu-scrim{background:rgba(3,28,34,.38);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.quick-item{border:1px solid rgba(255,255,255,.92);background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(235,248,243,.72));box-shadow:0 5px 16px rgba(10,62,62,.055);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease}
+.quick-item:hover,.quick-item:focus-visible{transform:translateY(-2px);border-color:rgba(78,179,142,.5);box-shadow:0 9px 22px rgba(10,62,62,.1)}
+
 .mobilebar button:active{transform:scale(.96)}
 .mobilebar button.active{color:#08705d;background:rgba(108,207,163,.13)}
 button:focus-visible,[role="button"]:focus-visible,a:focus-visible{
