@@ -224,6 +224,10 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible{
 .profile-menu button:hover,.profile-menu button:focus-visible{background:rgba(20,115,99,.1);outline:none}
 @media(max-width:720px){.brand-copy small{display:none}.profile-menu{position:fixed;right:14px;top:72px;min-width:220px}}
 
+/* Overview Add Listing action: retain mobile-friendly wrap and spacing. */
+#page-home .headingrow{align-items:center;gap:14px;flex-wrap:wrap}
+#page-home .headingrow>.primary{flex-shrink:0}
+@media(max-width:720px){#page-home .headingrow{align-items:flex-start}#page-home .headingrow>.primary{width:100%;justify-content:center}}
 /* Overview photo-led experience: photographic agricultural background with readable teal glass surfaces. */
 /* Brighter Overview: use the agricultural field image with a soft daylight wash. */
 #page-home{position:relative;isolation:isolate;padding:clamp(14px,2vw,26px);margin:-10px;border-radius:22px;overflow:hidden;background:#eaf3e7;color:#173c2c}
@@ -332,7 +336,7 @@ button,input,select,textarea{max-width:100%}
 <main class="main">
 <section class="page active" id="page-home">
   <div class="eyebrow">YOUR AGRICULTURAL NETWORK</div>
-  <div class="headingrow"><div><h1>Make your assets work.</h1><p>Find trading opportunities across Botswana's agricultural economy.</p></div></div>
+  <div class="headingrow"><div><h1>Make your assets work.</h1><p>Find trading opportunities across Botswana's agricultural economy.</p></div><button class="primary" onclick="navigate('create')" aria-label="Add a new listing">＋ Add Listing</button></div>
   <div class="hero"><div><div class="eyebrow" style="color:#e8c96d">TEMO EXCHANGE 2.0 · BOTSWANA</div><h2>Trade what you have.<br>Find what you need.</h2><p>A marketplace built for farmers, cooperatives and agricultural businesses. Exchange goods, trade for cash, or combine both.</p><button class="primary" onclick="navigate('market')">Explore marketplace ↗</button></div><div class="hero-art" aria-hidden="true"></div></div>
 </section>
 <section class="page" id="page-market">
