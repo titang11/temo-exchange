@@ -387,6 +387,48 @@ footer{color:#9dbdb5}
 @media(max-width:850px){.layout{grid-template-columns:170px minmax(0,1fr)}.sidebar{padding:18px 10px}.navbtn{font-size:12px;padding:11px 9px;gap:8px}.main{padding:18px}}
 @media(max-width:720px){.layout{display:block}.sidebar{position:static;height:auto;min-height:0;display:flex;gap:6px;overflow-x:auto;white-space:nowrap;padding:10px;background:rgba(2,34,32,.96);border-right:0;border-bottom:1px solid rgba(73,220,188,.22)}.sidebar .side-label,.sidebar .side-card,.sidebar>p{display:none}.navbtn{width:auto;min-width:max-content;margin:0;padding:10px 12px}.main{padding:14px}.hero{min-height:300px;padding:24px 20px;background-position:58% center}.hero h2{font-size:32px}.page{border-radius:16px}}
 
+
+/* Reference-matched Overview layout: hero/dashboard composition and featured cards. */
+#page-home{padding:clamp(14px,2.3vw,28px);margin:-10px;border-radius:20px;overflow:hidden;background:#062622;color:#f2fbf7}
+#page-home:before{background-image:linear-gradient(90deg,rgba(1,34,30,.82),rgba(2,43,36,.43)),url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85");background-size:cover;background-position:center;opacity:.68}
+#page-home:after{background:linear-gradient(180deg,rgba(2,33,30,.34),rgba(2,34,30,.88) 42%,rgba(2,32,29,.97) 100%)}
+#page-home .temo-dashboard-top{position:relative;z-index:1;padding:clamp(8px,2vw,22px) 4px 22px}
+#page-home .eyebrow{color:#83f3a1}
+#page-home .headingrow{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:12px 0 0}
+#page-home .headingrow h1{color:#f6fffb;font-size:clamp(30px,4vw,48px);line-height:1.06;letter-spacing:-.04em;margin:0}
+#page-home .headingrow p{color:#e2f3ec;margin:8px 0 0}
+#page-home .headingrow .temo-intro{max-width:590px;line-height:1.65;color:#d0e9df}
+#page-home .temo-comma{color:#7af49b}
+#page-home .temo-how,#page-home .temo-activity{position:relative;z-index:1;background:rgba(3,56,49,.68);border:1px solid rgba(76,230,190,.58);color:#f2fbf7;box-shadow:0 18px 42px rgba(0,0,0,.2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:20px;padding:clamp(18px,3vw,30px);margin:8px 0 28px}
+#page-home .temo-section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+#page-home .temo-section-title h2{font-size:clamp(20px,2.4vw,28px);color:#f6fffb;margin:0;letter-spacing:-.02em}
+#page-home .temo-section-title p{color:#c7e4da;margin:6px 0 0;font-size:13px}
+#page-home .temo-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+#page-home .temo-steps article{padding:8px clamp(12px,2.6vw,28px);border-right:1px solid rgba(91,226,192,.55)}
+#page-home .temo-steps article:first-child{padding-left:0}
+#page-home .temo-steps article:last-child{border-right:0;padding-right:0}
+#page-home .temo-steps article>span{display:block;font-size:25px;font-weight:850;color:#78f49a;margin-bottom:6px}
+#page-home .temo-steps h3{font-size:21px;color:#fff;margin:0 0 7px}
+#page-home .temo-steps p{font-size:13px;line-height:1.6;color:#d6eee5;margin:0}
+#page-home .temo-featured{position:relative;z-index:1;margin:0 0 28px}
+#page-home .temo-leaf{color:#76f29b;margin-left:5px}
+#page-home .temo-text-button{background:transparent;border:0;color:#81f5a1;font-weight:750;padding:8px 4px;white-space:nowrap}
+#page-home .temo-text-button span{font-size:18px;margin-left:5px}
+#page-home .temo-featured-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+#page-home .temo-featured-grid .listing{background:rgba(0,49,46,.84);border:1px solid rgba(40,220,194,.72);border-radius:16px;overflow:hidden;color:#f3fbf7;box-shadow:0 12px 28px rgba(0,0,0,.2);transition:transform .22s ease,border-color .22s ease}
+#page-home .temo-featured-grid .listing:hover{transform:translateY(-4px);border-color:#86f5a5}
+#page-home .temo-featured-grid .listing h3{color:#f7fffb}
+#page-home .temo-featured-grid .listing .listingbody{background:transparent}
+#page-home .temo-featured-grid .listing .cat,#page-home .temo-featured-grid .listing .location,#page-home .temo-featured-grid .listing .smallmuted{color:#c5e2d9}
+#page-home .temo-featured-grid .badge{background:rgba(0,109,77,.9);color:#fff;border:1px solid rgba(125,247,164,.45)}
+#page-home .temo-activity{margin-bottom:6px}
+#page-home .temo-activity-empty{display:flex;align-items:center;gap:14px;padding:16px;border-top:1px solid rgba(91,226,192,.26)}
+#page-home .temo-activity-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(65,202,165,.18);border:1px solid rgba(91,226,192,.35);font-size:22px;color:#88f6a6;flex-shrink:0}
+#page-home .temo-activity-empty strong{color:#f3fbf7;font-size:14px}
+#page-home .temo-activity-empty p{margin:5px 0 0;color:#c6e1d8;font-size:12px;line-height:1.55;max-width:650px}
+@media(max-width:900px){#page-home .temo-featured-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#page-home{margin:-5px;padding:12px;border-radius:16px}#page-home .headingrow{align-items:flex-start;flex-direction:column}#page-home .headingrow>.primary{width:100%;justify-content:center}#page-home .temo-steps{grid-template-columns:1fr;gap:12px}#page-home .temo-steps article,#page-home .temo-steps article:first-child,#page-home .temo-steps article:last-child{padding:8px 0;border-right:0;border-bottom:1px solid rgba(91,226,192,.3)}#page-home .temo-steps article:last-child{border-bottom:0}#page-home .temo-featured-grid{grid-template-columns:1fr}#page-home .temo-section-title{align-items:flex-start}#page-home .temo-activity-empty{align-items:flex-start;padding:14px 0}}
+
 </style>
 </head>
 <body>
@@ -423,9 +465,26 @@ footer{color:#9dbdb5}
 </aside>
 <main class="main">
 <section class="page active" id="page-home">
-  <div class="eyebrow">YOUR AGRICULTURAL NETWORK</div>
-  <div class="headingrow"><div><h1>Make your assets work.</h1><p>Find trading opportunities across Botswana's agricultural economy.</p></div><button class="primary" onclick="navigate('create')" aria-label="Add a new listing">＋ Add Listing</button></div>
-  <div class="hero"><div><div class="eyebrow" style="color:#e8c96d">TEMO EXCHANGE 2.0 · BOTSWANA</div><h2>Trade what you have.<br>Find what you need.</h2><p>A marketplace built for farmers, cooperatives and agricultural businesses. Exchange goods, trade for cash, or combine both.</p><button class="primary" onclick="navigate('market')">Explore marketplace ↗</button></div><div class="hero-art" aria-hidden="true"></div></div>
+  <div class="temo-dashboard-top">
+    <div class="eyebrow">TEMO EXCHANGE · BOTSWANA PILOT</div>
+    <div class="headingrow"><div><h1>Welcome back<span class="temo-comma">,</span></h1><p>Trade smarter. Grow together.</p><p class="temo-intro">Buy, sell and exchange agricultural goods and services with people in your community.</p></div><button class="primary" onclick="navigate('create')" aria-label="Add a new listing">＋ Add Listing</button></div>
+  </div>
+  <section class="temo-how panel" aria-label="How TEMO works">
+    <div class="temo-section-title"><div><h2>How TEMO works</h2><p>Simple. Fair. Community driven.</p></div></div>
+    <div class="temo-steps">
+      <article><span>01</span><h3>List</h3><p>Describe your asset, quantity, location and what you want in return.</p></article>
+      <article><span>02</span><h3>Match</h3><p>Explore goods and services that may meet your needs.</p></article>
+      <article><span>03</span><h3>Propose</h3><p>Send a cash, barter or mixed proposal.</p></article>
+    </div>
+  </section>
+  <section class="temo-featured">
+    <div class="temo-section-title"><div><h2>Featured listings <span class="temo-leaf">⌁</span></h2><p>Discover available agricultural goods and services.</p></div><button class="temo-text-button" onclick="navigate('market')">View all <span aria-hidden="true">→</span></button></div>
+    <div class="grid temo-featured-grid" id="featuredGrid"></div>
+  </section>
+  <section class="temo-activity panel">
+    <div class="temo-section-title"><div><h2>Recent activity</h2><p>Updates from your TEMO workspace.</p></div><button class="temo-text-button" onclick="navigate('trades')">Open trade centre <span aria-hidden="true">→</span></button></div>
+    <div class="temo-activity-empty"><span class="temo-activity-icon" aria-hidden="true">↗</span><div><strong>Your activity will appear here</strong><p>As you create listings and receive offers, relevant updates will be shown here. No sample trades or payments are created.</p></div></div>
+  </section>
 </section>
 <section class="page" id="page-market">
   <div class="eyebrow">DISCOVER VALUE</div><div class="headingrow"><div><h1>Marketplace</h1><p>Browse agricultural assets and opportunities.</p></div><button class="primary" onclick="navigate('create')">＋ Create listing</button></div>
