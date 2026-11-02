@@ -383,6 +383,33 @@ body{background:radial-gradient(ellipse at 10% 0%,#d9e9d8 0%,transparent 42%),li
 @media(max-width:650px){#page-home{margin:-4px;padding:12px;border-radius:16px}#page-home .temo-welcome-row{align-items:flex-start;flex-direction:column}#page-home .temo-welcome-row>.primary{width:100%;justify-content:center}#page-home .temo-steps{grid-template-columns:1fr;gap:12px}#page-home .temo-steps article,#page-home .temo-steps article:first-child,#page-home .temo-steps article:last-child{padding:8px 0;border-right:0;border-bottom:1px solid rgba(91,226,192,.3)}#page-home .temo-steps article:last-child{border-bottom:0}#page-home .temo-featured-grid{grid-template-columns:1fr}#page-home .temo-section-title{align-items:flex-start}#page-home .temo-activity-empty{align-items:flex-start;padding:14px 0}}
 @media(prefers-reduced-motion:reduce){#page-home *,#page-home *:before,#page-home *:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+
+/* Overview is a consumer-facing official news and announcements landing page. */
+#page-home{position:relative;isolation:isolate;min-height:calc(100vh - 120px);padding:clamp(18px,3vw,36px);margin:-8px;border-radius:22px;overflow:hidden;background:#092f28;color:#f6fbf5}
+#page-home:before{content:"";position:absolute;inset:0;z-index:-2;background-image:url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85");background-size:cover;background-position:center 45%;transform:scale(1.015)}
+#page-home:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,38,31,.58) 0%,rgba(5,38,31,.76) 42%,rgba(4,31,27,.94) 100%);pointer-events:none}
+#page-home .temo-welcome{position:relative;z-index:1;min-height:clamp(240px,34vw,390px);display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(10px,2vw,24px) 4px 32px}
+#page-home .temo-welcome h1{font-size:clamp(34px,5vw,56px);line-height:1.04;letter-spacing:-.04em;margin:10px 0;color:#fff}
+#page-home .temo-welcome-row{display:block;margin-top:8px}
+#page-home .temo-welcome-row>.primary{display:none}
+#page-home .temo-greeting{font-size:18px;color:#f1fff5;margin:0}
+#page-home .temo-intro{max-width:650px;color:#e1f1e8;line-height:1.7;margin-top:10px}
+#page-home .eyebrow,#page-home .temo-news-kicker{color:#8af5a5;letter-spacing:.17em;font-size:11px;font-weight:850}
+#page-home .temo-news-section{position:relative;z-index:1;margin:0 auto;max-width:1050px;padding:clamp(18px,3vw,30px);border:1px solid rgba(115,235,193,.48);border-radius:20px;background:rgba(3,48,42,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 18px 45px rgba(0,0,0,.25)}
+#page-home .temo-news-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px}
+#page-home .temo-news-heading h2{margin:6px 0;color:#f7fff9;font-size:clamp(23px,3vw,32px);letter-spacing:-.025em}
+#page-home .temo-news-heading p{margin:0;color:#d2e9dd;line-height:1.6;font-size:13px;max-width:650px}
+#page-home .temo-news-list{display:grid;gap:12px}
+#page-home .temo-news-card{padding:17px 18px;border:1px solid rgba(106,221,185,.28);border-radius:14px;background:rgba(5,67,57,.58)}
+#page-home .temo-news-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:#b9d9cb;font-size:11px}
+#page-home .temo-news-type{display:inline-flex;padding:4px 9px;border-radius:30px;background:rgba(116,231,157,.16);border:1px solid rgba(124,245,160,.35);color:#a4ffb8;text-transform:capitalize}
+#page-home .temo-news-card h3{margin:9px 0 6px;color:#fff;font-size:19px}
+#page-home .temo-news-card p{margin:0;color:#d5e9df;line-height:1.65;font-size:13px;white-space:pre-wrap}
+#page-home .temo-news-source{display:inline-block;margin-top:12px;color:#8af5a5;font-weight:750;font-size:12px;text-decoration:none}
+#page-home .temo-news-source:hover{text-decoration:underline}
+#page-home .temo-news-empty,#page-home .temo-news-loading{padding:24px 18px;border:1px dashed rgba(133,231,190,.4);border-radius:14px;color:#d1e8dc;text-align:center;background:rgba(3,49,43,.45)}
+@media(max-width:650px){#page-home{margin:-4px;padding:12px;border-radius:16px}#page-home .temo-welcome{min-height:300px;padding:12px 3px 24px}#page-home .temo-news-section{padding:17px 14px;border-radius:16px}#page-home .temo-news-heading{align-items:flex-start}#page-home .temo-news-heading .temo-link{white-space:nowrap}#page-home .temo-news-card{padding:14px}}
+
 </style>
 </head>
 <body>
@@ -423,21 +450,9 @@ body{background:radial-gradient(ellipse at 10% 0%,#d9e9d8 0%,transparent 42%),li
     <div class="eyebrow">TEMO EXCHANGE · BOTSWANA PILOT</div>
     <div class="temo-welcome-row"><div><h1>Welcome back<span class="temo-comma">,</span></h1><p class="temo-greeting"><strong>Trade smarter. Grow together.</strong></p><p class="temo-intro">Buy, sell and exchange agricultural goods and services with trusted people in your community.</p></div><button class="primary" onclick="navigate('create')" aria-label="Add a new listing">＋ Add Listing</button></div>
   </div>
-  <section class="temo-how panel" aria-label="How TEMO works">
-    <div class="temo-section-title"><div><h2>How TEMO works</h2><p>Simple. Fair. Community driven.</p></div></div>
-    <div class="temo-steps">
-      <article><span>01</span><h3>List</h3><p>Describe your asset, quantity, location and what you want in return.</p></article>
-      <article><span>02</span><h3>Match</h3><p>Explore goods and services that may meet your needs.</p></article>
-      <article><span>03</span><h3>Propose</h3><p>Send a cash, barter or mixed proposal.</p></article>
-    </div>
-  </section>
-  <section class="temo-featured">
-    <div class="temo-section-title"><div><h2>Featured listings <span class="temo-leaf">⌁</span></h2><p>Explore available agricultural goods and services.</p></div><button class="temo-link" onclick="navigate('market')">View all <span>→</span></button></div>
-    <div class="grid temo-featured-grid" id="featuredGrid"></div>
-  </section>
-  <section class="temo-activity panel">
-    <div class="temo-section-title"><div><h2>Recent activity</h2><p>Updates from your TEMO workspace.</p></div><button class="temo-link" onclick="navigate('trades')">Trade centre <span>→</span></button></div>
-    <div class="temo-activity-empty"><span class="temo-activity-icon" aria-hidden="true">↗</span><div><strong>Your activity will appear here</strong><p>As your listings and trades generate updates, they can appear here. No sample trades, messages or payments are created.</p></div></div>
+  <section class="temo-news-section">
+    <div class="temo-news-heading"><div><span class="temo-news-kicker">FROM TEMO</span><h2>News & announcements</h2><p>Official updates, agricultural news and important notices for our community.</p></div><button class="temo-link" onclick="navigate('knowledge')">All updates <span>→</span></button></div>
+    <div id="overviewNews" class="temo-news-list" aria-live="polite"><div class="temo-news-loading">Loading the latest community updates…</div></div>
   </section>
 </section>
 <section class="page" id="page-market">
@@ -968,7 +983,17 @@ function toggleProfileMenu(force){const menu=document.getElementById('profileMen
 function profileMenuNavigate(page){toggleProfileMenu(false);navigate(page);}
 document.addEventListener('click',function(event){const wrap=document.querySelector('.profile-menu-wrap');if(wrap&&!wrap.contains(event.target))toggleProfileMenu(false);});
 document.addEventListener('keydown',function(event){if(event.key==='Escape')toggleProfileMenu(false);});
-function navigate(page){toggleQuickMenu(false);if(isAccountReviewRestricted()&&!['account-review','profile','staff-messages'].includes(page)){showToast('This account-review account is limited to its authorised workspace.');page='account-review';}if(isOpsRestricted()&&!['verification','profile','staff-messages'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if((page==='feed'||page==='network')&&isAdmin()){showToast('Administrator accounts do not browse community stories. Open reported content only through moderation.');page='market';}if(page==='staff-messages'&&!isStaff()){showToast('Staff messaging is for authorised staff accounts.');page='home';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='saved')renderSaved();if(page==='trades'){renderTrades();loadPaymentOptions();loadPaymentRecords();}if(page==='admin')renderAdmin();if(page==='home')renderFeatured();if(page==='matches'){renderMatches();loadMatchingAlerts();}if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();if(page==='account-review')loadAccountReviewWorkspace();if(page==='feed')loadFeed();if(page==='network')loadNetwork();if(page==='group-orders')loadGroupOrders();if(page==='knowledge')loadKnowledgeResources();if(page==='staff-messages')loadStaffWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
+function navigate(page){toggleQuickMenu(false);if(isAccountReviewRestricted()&&!['account-review','profile','staff-messages'].includes(page)){showToast('This account-review account is limited to its authorised workspace.');page='account-review';}if(isOpsRestricted()&&!['verification','profile','staff-messages'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if((page==='feed'||page==='network')&&isAdmin()){showToast('Administrator accounts do not browse community stories. Open reported content only through moderation.');page='market';}if(page==='staff-messages'&&!isStaff()){showToast('Staff messaging is for authorised staff accounts.');page='home';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='saved')renderSaved();if(page==='trades'){renderTrades();loadPaymentOptions();loadPaymentRecords();}if(page==='admin')renderAdmin();if(page==='home')loadOverviewNews();if(page==='matches'){renderMatches();loadMatchingAlerts();}if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();if(page==='account-review')loadAccountReviewWorkspace();if(page==='feed')loadFeed();if(page==='network')loadNetwork();if(page==='group-orders')loadGroupOrders();if(page==='knowledge')loadKnowledgeResources();if(page==='staff-messages')loadStaffWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
+
+async function loadOverviewNews(){
+ const root=document.getElementById('overviewNews');if(!root)return;
+ if(!supabaseClient){root.innerHTML='<div class="temo-news-empty">Connect to TEMO to view official announcements and agricultural updates.</div>';return;}
+ const {data,error}=await supabaseClient.from('temo_agricultural_resources').select('id,title,summary,resource_type,source_name,source_url,published_at,created_at,status').eq('status','published').order('published_at',{ascending:false}).limit(8);
+ if(error){root.innerHTML='<div class="temo-news-empty">Community updates are temporarily unavailable. Please try again later.</div>';return;}
+ const items=(data||[]).filter(x=>['news','market_update','programme','training','weather','guide'].includes(String(x.resource_type||'').toLowerCase()));
+ if(!items.length){root.innerHTML='<div class="temo-news-empty"><strong>No official updates have been published yet.</strong><br>When TEMO administrators publish news or announcements, they will appear here.</div>';return;}
+ root.innerHTML=items.map(x=>'<article class="temo-news-card"><div class="temo-news-meta"><span class="temo-news-type">'+esc(String(x.resource_type||'update').replace(/_/g,' '))+'</span><span>'+esc(safeDate(x.published_at||x.created_at))+'</span><span>· '+esc(x.source_name||'TEMO Exchange')+'</span></div><h3>'+esc(x.title||'Community update')+'</h3><p>'+esc(x.summary||'Open the source for more information.')+'</p>'+(x.source_url&&/^https?:\/\//i.test(x.source_url)?'<a class="temo-news-source" href="'+esc(x.source_url)+'" target="_blank" rel="noopener noreferrer">Read full update ↗</a>':'')+'</article>').join('');
+}
 function updateStats(){const tradeCountEl=document.getElementById('tradeCount');if(tradeCountEl)tradeCountEl.textContent=offers.length;const profileListingsEl=document.getElementById('profileListings');if(profileListingsEl)profileListingsEl.textContent=listings.filter(x=>x.createdByMe).length}
 
 function money(v){return 'P'+Number(v||0).toLocaleString('en-BW',{minimumFractionDigits:2,maximumFractionDigits:2});}
