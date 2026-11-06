@@ -567,6 +567,79 @@ body::after{
  .panel:hover,.stat:hover{transform:translateY(-2px);border-color:rgba(230,240,246,.34)}
 }
 
+
+/* COMPLETE LEGACY GREEN THEME REPLACEMENT — Dark Chrome Glass */
+:root{
+ --green:#dce4e9!important;--green2:#aebbc5!important;--gold:#c7d2da!important;
+ --cream:#0b1117!important;--paper:rgba(22,31,40,.84)!important;
+ --ink:#edf2f5!important;--muted:#aab7c0!important;--line:rgba(218,230,238,.20)!important;
+ --red:#d58b83!important;--shadow:0 18px 50px rgba(0,0,0,.38)!important;
+ --chrome:#dce4e9;--chrome-light:#f3f6f8;--chrome-mid:#aebbc5;--graphite:#111922;
+}
+html,body{min-height:100%;background:#0b1117!important;color:#edf2f5!important}
+body{background-image:linear-gradient(120deg,rgba(5,10,15,.86),rgba(12,20,28,.72),rgba(5,10,15,.88)),url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85")!important;background-position:center!important;background-size:cover!important;background-attachment:fixed!important}
+.app,.layout,.main,.page{background:transparent!important;color:#edf2f5!important}
+.topbar,.sidebar,.mobilebar,.quick-menu-panel,.profile-menu,.notification-panel,.dropdown-menu{
+ color:#edf2f5!important;background:linear-gradient(145deg,rgba(35,46,57,.94),rgba(10,16,23,.96))!important;
+ border-color:rgba(225,236,243,.24)!important;box-shadow:0 16px 48px rgba(0,0,0,.38)!important;
+ backdrop-filter:blur(25px) saturate(135%)!important;-webkit-backdrop-filter:blur(25px) saturate(135%)!important
+}
+.side-label,.eyebrow,.smallmuted,.muted,.hint,.field label{color:#aebbc5!important}
+.navbtn,.mobilebar button,.profile-menu button,.dropdown-menu button{color:#d2dce2!important;background:transparent!important}
+.navbtn.active,.navbtn:hover,.mobilebar button.active,.quick-item.active{
+ color:#fff!important;background:linear-gradient(120deg,rgba(226,235,241,.22),rgba(166,184,197,.09))!important;
+ border:1px solid rgba(232,241,247,.30)!important;box-shadow:inset 3px 0 #dce5eb,0 8px 22px rgba(0,0,0,.18)!important
+}
+.panel,.card,.stat,.listing,.tradecard,.resource-card,.feed-card,.match-card,.profile-card,.group-card,.temo-welcome,.temo-news-section,.temo-news-card,.news-card,.side-card,.box,.tile{
+ color:#edf2f5!important;background:linear-gradient(145deg,rgba(43,55,66,.84),rgba(13,21,29,.84))!important;
+ border:1px solid rgba(222,234,242,.22)!important;box-shadow:0 14px 40px rgba(0,0,0,.26)!important;
+ backdrop-filter:blur(20px) saturate(130%)!important;-webkit-backdrop-filter:blur(20px) saturate(130%)!important
+}
+h1,h2,h3,h4,h5,p,label,small,span{ text-shadow:none }
+.headingrow h1,.sectionhead h2,.panel h2,.panel h3,.listing h3,.tradecard h3,.temo-news-heading h2,.temo-welcome h1{color:#f0f4f7!important}
+p,.description,.intro,.temo-intro,.temo-news-heading p{color:#c2cdd4}
+button,.primary,.secondary,.textbtn,.temo-link,.chip,.pill,.notification-trigger,.profile-trigger{
+ transition:background .22s ease,border-color .22s ease,transform .22s ease,box-shadow .22s ease
+}
+button.primary,.primary,.hero .primary,.side-card button{
+ color:#17222b!important;background:linear-gradient(135deg,#f1f5f7 0%,#aab8c2 52%,#dce5ea 100%)!important;
+ border:1px solid rgba(255,255,255,.68)!important;box-shadow:0 8px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.8)!important
+}
+button.secondary,.secondary,.textbtn,.temo-link,.pill,.notification-trigger,.profile-trigger{
+ color:#e4ebf0!important;background:rgba(220,231,238,.08)!important;border:1px solid rgba(225,236,243,.22)!important
+}
+button:hover,.primary:hover,.secondary:hover{filter:brightness(1.08)}
+input,select,textarea,.search,.field input,.field select,.field textarea{
+ color:#edf2f5!important;background:rgba(7,13,19,.70)!important;border:1px solid rgba(220,232,240,.25)!important
+}
+input::placeholder,textarea::placeholder{color:#8999a4!important}
+input:focus,select:focus,textarea:focus{border-color:#d6e1e8!important;box-shadow:0 0 0 3px rgba(211,226,236,.13)!important;outline:none!important}
+.tradechoice label,.chip,.filter-chip{color:#dce5eb!important;background:rgba(225,235,242,.07)!important;border-color:rgba(225,235,242,.20)!important}
+.chip.active,.filter-chip.active{color:#17222b!important;background:linear-gradient(135deg,#eef3f6,#a9b7c1)!important}
+.table,.table th,.table td,table,th,td{color:#dce5eb!important;border-color:rgba(220,232,240,.16)!important}
+.table th,th{color:#aebbc5!important;background:rgba(220,232,240,.07)!important}
+.modalback{background:rgba(0,0,0,.72)!important;backdrop-filter:blur(9px)!important}
+.modal,.dialog,.popover-content{color:#edf2f5!important;background:linear-gradient(145deg,rgba(39,51,62,.98),rgba(10,17,24,.98))!important;border:1px solid rgba(225,236,243,.27)!important}
+.badge,.status,.tag{border:1px solid rgba(220,232,240,.20)!important}
+.badge{color:#1b2730!important;background:linear-gradient(135deg,#edf2f5,#b7c3cc)!important}
+.status,.tag{color:#e5edf2!important;background:rgba(215,228,237,.12)!important}
+.status.verified{color:#c5ead4!important;background:rgba(74,145,106,.22)!important}
+.status.pending{color:#d5e5f7!important;background:rgba(90,126,168,.24)!important}
+.status.rejected{color:#f0c5bf!important;background:rgba(165,82,72,.23)!important}
+.empty,.empty-state{color:#bdc9d1!important;background:rgba(8,15,22,.45)!important;border:1px dashed rgba(220,232,240,.25)!important}
+.toast{color:#17222b!important;background:linear-gradient(135deg,#edf2f5,#a9b7c1)!important}
+.quick-menu-scrim{background:rgba(0,0,0,.54)!important}
+.quick-menu-heading{color:#f0f4f7!important}.quick-menu-heading span+span{color:#aebbc5!important}
+.quick-item{color:#e8eef2!important;background:linear-gradient(145deg,rgba(224,233,239,.17),rgba(255,255,255,.045))!important;border:1px solid rgba(225,236,243,.22)!important}
+.quick-menu-trigger{color:#17222b!important;background:linear-gradient(145deg,#edf2f5,#9eacb7)!important;border:1px solid rgba(255,255,255,.7)!important}
+a{color:#d8e5ed}
+hr,.divider{border-color:rgba(220,232,240,.16)!important}
+@media(max-width:720px){
+ body{background-attachment:scroll!important}
+ .mobilebar{background:rgba(10,16,23,.95)!important}
+ .quick-menu-panel{background:linear-gradient(145deg,rgba(38,50,61,.98),rgba(9,15,22,.98))!important}
+}
+
 </style>
 </head>
 <body>
