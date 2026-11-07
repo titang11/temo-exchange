@@ -642,6 +642,18 @@ hr,.divider{border-color:rgba(220,232,240,.16)!important}
 
 
 .temo-pin-map{height:220px;border-radius:15px;overflow:hidden;border:1px solid var(--line);background:#dce6e3;margin:8px 0}.leaflet-container{font:inherit}#geoMap .leaflet-popup-content-wrapper,#geoMap .leaflet-popup-tip{background:#172326;color:#f4f7f8}#geoMap .leaflet-popup-content a{color:#dcebf3;font-weight:800}@media(max-width:720px){.temo-pin-map{height:205px}}
+
+/* Botswana-centred interactive maps */
+.temo-overview-map-section{margin:28px 0 34px;position:relative}
+.temo-overview-map{height:clamp(340px,48vw,520px);width:100%;border-radius:22px;overflow:hidden;border:1px solid rgba(225,235,242,.28);box-shadow:0 18px 48px rgba(0,0,0,.25);background:#dce6e3}
+.temo-map-legend{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 4px;color:var(--muted);font-size:12px}
+.temo-map-legend>span{display:inline-flex;align-items:center;gap:7px}
+.temo-map-dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:#bfcbd3;border:2px solid #fff;box-shadow:0 0 0 1px #52616b}
+.temo-map-dot.service{background:#e2bd64}
+#overviewGeoMap .leaflet-popup-content-wrapper,#overviewGeoMap .leaflet-popup-tip,#geoMap .leaflet-popup-content-wrapper,#geoMap .leaflet-popup-tip{background:#172326;color:#f4f7f8}
+#overviewGeoMap .leaflet-popup-content a,#geoMap .leaflet-popup-content a{color:#dcebf3;font-weight:800}
+#overviewGeoMap .leaflet-control-zoom a,#geoMap .leaflet-control-zoom a{background:#172326;color:#fff;border-color:#60717b}
+@media(max-width:720px){.temo-overview-map-section{margin:22px 0 28px}.temo-overview-map{height:390px;border-radius:17px}.temo-map-legend{gap:10px}}
 </style>
 </head>
 <body>
@@ -682,6 +694,11 @@ hr,.divider{border-color:rgba(220,232,240,.16)!important}
     <div class="eyebrow">TEMO EXCHANGE · BOTSWANA PILOT</div>
     <div class="temo-welcome-row"><div><h1>Welcome back<span class="temo-comma">,</span></h1><p class="temo-greeting"><strong>Trade smarter. Grow together.</strong></p><p class="temo-intro">Buy, sell and exchange agricultural goods and services with trusted people in your community.</p></div><button class="primary" onclick="navigate('create')" aria-label="Add a new listing">＋ Add Listing</button></div>
   </div>
+  <section class="temo-overview-map-section">
+    <div class="temo-news-heading"><div><span class="temo-news-kicker">LIVE AGRICULTURAL MAP</span><h2>Explore Botswana on TEMO</h2><p>See publicly shared, approved agricultural listings and services across Botswana. Move the map, zoom in and select a pin for details.</p></div><button class="temo-link" onclick="navigate('geomarket')">Open GeoMarket →</button></div>
+    <div id="overviewGeoMap" class="temo-overview-map" role="region" aria-label="Interactive map of Botswana showing TEMO listings"></div>
+    <div class="temo-map-legend"><span><i class="temo-map-dot product"></i> Agricultural listings</span><span><i class="temo-map-dot service"></i> Services</span><span id="overviewGeoStatus" aria-live="polite">Loading approved public pins…</span></div>
+  </section>
   <section class="temo-news-section">
     <div class="temo-news-heading"><div><span class="temo-news-kicker">FROM TEMO</span><h2>News & announcements</h2><p>Official updates, agricultural news and important notices for our community.</p></div><button class="temo-link" onclick="navigate('knowledge')">All updates <span>→</span></button></div>
     <div id="overviewNews" class="temo-news-list" aria-live="polite"><div class="temo-news-loading">Loading the latest community updates…</div></div>
@@ -1216,7 +1233,7 @@ function toggleProfileMenu(force){const menu=document.getElementById('profileMen
 function profileMenuNavigate(page){toggleProfileMenu(false);navigate(page);}
 document.addEventListener('click',function(event){const wrap=document.querySelector('.profile-menu-wrap');if(wrap&&!wrap.contains(event.target))toggleProfileMenu(false);});
 document.addEventListener('keydown',function(event){if(event.key==='Escape')toggleProfileMenu(false);});
-function navigate(page){toggleQuickMenu(false);if(isAccountReviewRestricted()&&!['account-review','profile','staff-messages'].includes(page)){showToast('This account-review account is limited to its authorised workspace.');page='account-review';}if(isOpsRestricted()&&!['verification','profile','staff-messages'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if((page==='feed'||page==='network')&&isAdmin()){showToast('Administrator accounts do not browse community stories. Open reported content only through moderation.');page='market';}if(page==='staff-messages'&&!isStaff()){showToast('Staff messaging is for authorised staff accounts.');page='home';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='geomarket')loadGeoMarket();if(page==='create')setTimeout(()=>initPinPicker('listing'),150);if(page==='services')setTimeout(()=>initPinPicker('service'),150);if(page==='saved')renderSaved();if(page==='trades'){renderTrades();loadPaymentOptions();loadPaymentRecords();}if(page==='admin')renderAdmin();if(page==='home')loadOverviewNews();if(page==='matches'){renderMatches();loadMatchingAlerts();}if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();if(page==='account-review')loadAccountReviewWorkspace();if(page==='feed')loadFeed();if(page==='network')loadNetwork();if(page==='group-orders')loadGroupOrders();if(page==='knowledge')loadKnowledgeResources();if(page==='staff-messages')loadStaffWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
+function navigate(page){toggleQuickMenu(false);if(isAccountReviewRestricted()&&!['account-review','profile','staff-messages'].includes(page)){showToast('This account-review account is limited to its authorised workspace.');page='account-review';}if(isOpsRestricted()&&!['verification','profile','staff-messages'].includes(page)){showToast('This operations account is limited to its authorised workspace.');page='verification';}if((page==='feed'||page==='network')&&isAdmin()){showToast('Administrator accounts do not browse community stories. Open reported content only through moderation.');page='market';}if(page==='staff-messages'&&!isStaff()){showToast('Staff messaging is for authorised staff accounts.');page='home';}if(page==='verification'&&!canOpenVerification()){showToast('Verification workspace is restricted to authorised agents and leaders.');page='home';}if(page==='admin'&&!isAdmin()){showToast('The verification desk is restricted to authorised administrators.');page='home';}document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));let el=document.getElementById('page-'+page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='market')renderMarket();if(page==='geomarket')loadGeoMarket();if(page==='create')setTimeout(()=>initPinPicker('listing'),150);if(page==='services')setTimeout(()=>initPinPicker('service'),150);if(page==='saved')renderSaved();if(page==='trades'){renderTrades();loadPaymentOptions();loadPaymentRecords();}if(page==='admin')renderAdmin();if(page==='home'){loadOverviewNews();setTimeout(()=>loadOverviewMap(),150);}if(page==='matches'){renderMatches();loadMatchingAlerts();}if(page==='inventory')renderInventory();if(page==='finance')loadFinance();if(page==='services'){loadServiceStatus();loadServiceMarketplace();}if(page==='verification')renderVerificationWorkspace();if(page==='account-review')loadAccountReviewWorkspace();if(page==='feed')loadFeed();if(page==='network')loadNetwork();if(page==='group-orders')loadGroupOrders();if(page==='knowledge')loadKnowledgeResources();if(page==='staff-messages')loadStaffWorkspace();updateStats();window.scrollTo({top:0,behavior:'smooth'})}
 
 async function loadOverviewNews(){
  const root=document.getElementById('overviewNews');if(!root)return;
@@ -1783,7 +1800,48 @@ function initPinPicker(kind){if(!window.L)return;const listing=kind==='listing',
 function pinStatus(kind,lat,lon){const e=document.getElementById(kind==='listing'?'listingPinStatus':'servicePinStatus');if(e)e.textContent='Pin: '+lat.toFixed(5)+', '+lon.toFixed(5)+' · drag to adjust';}
 function useDeviceLocation(kind){if(!navigator.geolocation){showToast('Location is unavailable. Tap the map to pin manually.');return;}showToast('Requesting location permission…');navigator.geolocation.getCurrentPosition(p=>{initPinPicker(kind);const m=temoPinMaps[kind];m.map.setView([p.coords.latitude,p.coords.longitude],15);m.setPin(p.coords.latitude,p.coords.longitude);},e=>showToast(e.code===1?'Location permission was not granted. You can pin manually.':'Could not get GPS location. Tap the map to pin manually.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});}
 function clearMapPin(kind){const listing=kind==='listing',m=temoPinMaps[kind],lat=document.getElementById(listing?'fLatitude':'offeringLatitude'),lon=document.getElementById(listing?'fLongitude':'offeringLongitude');lat.value='';lon.value='';if(m&&m.getMarker())m.getMarker().remove();const e=document.getElementById(listing?'listingPinStatus':'servicePinStatus');if(e)e.textContent='Pin cleared. Tap map to place one.';}
-async function loadGeoMarket(){const el=document.getElementById('geoMap'),status=document.getElementById('geoMapStatus');if(!el||!window.L)return;if(!temoGeoMap){temoGeoMap=L.map(el).setView([-22.3285,24.6849],5);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(temoGeoMap);temoGeoLayer=L.layerGroup().addTo(temoGeoMap);}setTimeout(()=>temoGeoMap.invalidateSize(),100);status.textContent='Loading public map pins…';const f=document.getElementById('geoFilter').value;const a=f==='services'?{data:[],error:null}:await supabaseClient.from('listings').select('id,title,description,category,location,price,latitude,longitude').eq('listing_status','published').eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500);const b=f==='products'?{data:[],error:null}:await supabaseClient.from('temo_service_offerings').select('id,title,description,service_type,service_area,latitude,longitude').eq('approval_status','approved').eq('available',true).eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500);temoGeoLayer.clearLayers();if(a.error||b.error){status.textContent='Could not load map pins. Please refresh and try again.';console.warn(a.error||b.error);return;}let count=0,bounds=[];(a.data||[]).forEach(x=>{L.marker([x.latitude,x.longitude]).bindPopup('<b>🌾 '+esc(x.title)+'</b><br>'+esc(x.location||'Botswana')+'<br>'+esc(x.category||'Agricultural listing')+' · P'+Number(x.price||0).toLocaleString('en-BW')+'<br><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+x.latitude+','+x.longitude+'">Get directions ↗</a>').addTo(temoGeoLayer);bounds.push([x.latitude,x.longitude]);count++;});(b.data||[]).forEach(x=>{L.circleMarker([x.latitude,x.longitude],{radius:9,weight:2,color:'#e2bd64',fillColor:'#172326',fillOpacity:.95}).bindPopup('<b>🛠 '+esc(x.title)+'</b><br>'+esc(x.service_area||'Service provider')+'<br>'+esc(String(x.service_type||'service').replace(/_/g,' '))+'<br><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+x.latitude+','+x.longitude+'">Get directions ↗</a>').addTo(temoGeoLayer);bounds.push([x.latitude,x.longitude]);count++;});if(bounds.length)temoGeoMap.fitBounds(bounds,{padding:[25,25],maxZoom:12});status.textContent=count?count+' public pins shown. Select a pin for details and directions.':'No public pins yet. Owners can add pins when creating listings or services.';}
+
+const temoDisplayMaps={};
+const TEMO_BOUNDS=[[-26.95,20.95],[-17.75,29.45]];
+function makeTemoBotswanaMap(elementId,kind){
+ const el=document.getElementById(elementId);if(!el||!window.L)return null;
+ if(temoDisplayMaps[kind]){setTimeout(()=>temoDisplayMaps[kind].map.invalidateSize(),100);return temoDisplayMaps[kind];}
+ const map=L.map(el,{scrollWheelZoom:true,zoomControl:true,maxBounds:TEMO_BOUNDS,maxBoundsViscosity:0.85,minZoom:5,maxZoom:17}).setView([-22.3285,24.6849],6);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+ const layer=L.layerGroup().addTo(map);temoDisplayMaps[kind]={map,layer};setTimeout(()=>map.invalidateSize(),120);return temoDisplayMaps[kind];
+}
+async function fetchTemoPublicMapPins(filter){
+ const f=filter||'all';
+ const a=f==='services'?{data:[],error:null}:await supabaseClient.from('listings').select('id,title,description,category,location,price,currency,latitude,longitude').eq('listing_status','published').eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500);
+ const b=f==='products'?{data:[],error:null}:await supabaseClient.from('temo_service_offerings').select('id,title,description,service_type,service_area,latitude,longitude').eq('approval_status','approved').eq('available',true).eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500);
+ return {products:a.data||[],services:b.data||[],error:a.error||b.error};
+}
+function drawTemoMapPins(target,records){
+ target.layer.clearLayers();let count=0;
+ (records.products||[]).forEach(x=>{const popup='<b>🌾 '+esc(x.title)+'</b><br>'+esc(x.location||'Botswana')+'<br>'+esc(x.category||'Agricultural listing')+' · '+esc(x.currency||'BWP')+' '+Number(x.price||0).toLocaleString('en-BW')+'<br><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+x.latitude+','+x.longitude+'">Get directions ↗</a>';L.marker([x.latitude,x.longitude]).bindPopup(popup).addTo(target.layer);count++;});
+ (records.services||[]).forEach(x=>{const popup='<b>🛠 '+esc(x.title)+'</b><br>'+esc(x.service_area||'Service provider')+'<br>'+esc(String(x.service_type||'service').replace(/_/g,' '))+'<br><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+x.latitude+','+x.longitude+'">Get directions ↗</a>';L.circleMarker([x.latitude,x.longitude],{radius:9,weight:2,color:'#e2bd64',fillColor:'#172326',fillOpacity:.95}).bindPopup(popup).addTo(target.layer);count++;});
+ return count;
+}
+async function loadOverviewMap(){
+ const status=document.getElementById('overviewGeoStatus');if(!status)return;
+ const target=makeTemoBotswanaMap('overviewGeoMap','overview');if(!target)return;
+ status.textContent='Loading approved public pins across Botswana…';
+ const records=await fetchTemoPublicMapPins('all');
+ if(records.error){status.textContent='Map listings are temporarily unavailable. Please try again later.';console.warn(records.error);return;}
+ const count=drawTemoMapPins(target,records);
+ status.textContent=count?count+' approved public pin'+(count===1?'':'s')+' shown. Tap a pin for details.':'No public pins yet. Approved listings and services will appear when their owners choose to share a location.';
+}
+async function loadGeoMarket(){
+ const status=document.getElementById('geoMapStatus');if(!status)return;
+ const target=makeTemoBotswanaMap('geoMap','geomarket');if(!target)return;
+ status.textContent='Loading approved public pins across Botswana…';
+ const filter=document.getElementById('geoFilter')?.value||'all';
+ const records=await fetchTemoPublicMapPins(filter);
+ if(records.error){status.textContent='Could not load map pins. Please refresh and try again.';console.warn(records.error);return;}
+ const count=drawTemoMapPins(target,records);
+ status.textContent=count?count+' public pins shown. Select a pin for details and directions.':'No public pins yet. Owners can add pins when creating listings or services.';
+}
+
 </script>
 </body>
 </html>
