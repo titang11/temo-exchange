@@ -1793,7 +1793,7 @@ async function respondPayment(id,decision){const {error}=await supabaseClient.rp
 
 function showToast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2600)}
 
-renderFeatured();renderMarket();renderSaved();renderTrades();renderMatches();renderAdmin();updateStats();updateAuthUI();initSupabase();
+renderFeatured();renderMarket();renderSaved();renderTrades();renderMatches();renderAdmin();updateStats();updateAuthUI();initSupabase();setTimeout(()=>{loadOverviewNews();loadOverviewMap();},500);
 
 const temoPinMaps={};let temoGeoMap=null,temoGeoLayer=null;
 function initPinPicker(kind){if(!window.L)return;const listing=kind==='listing',id=listing?'listingPinMap':'servicePinMap',el=document.getElementById(id);if(!el)return;if(temoPinMaps[kind]){setTimeout(()=>temoPinMaps[kind].map.invalidateSize(),80);return;}const latEl=document.getElementById(listing?'fLatitude':'offeringLatitude'),lonEl=document.getElementById(listing?'fLongitude':'offeringLongitude');const lat=latEl.value?Number(latEl.value):-22.3285,lon=lonEl.value?Number(lonEl.value):24.6849;const map=L.map(el,{scrollWheelZoom:false}).setView([lat,lon],latEl.value?13:5);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);let marker=null;const setPin=(a,b)=>{latEl.value=a.toFixed(6);lonEl.value=b.toFixed(6);if(marker)marker.setLatLng([a,b]);else{marker=L.marker([a,b],{draggable:true}).addTo(map);marker.on('dragend',()=>{const p=marker.getLatLng();latEl.value=p.lat.toFixed(6);lonEl.value=p.lng.toFixed(6);pinStatus(kind,p.lat,p.lng);});}pinStatus(kind,a,b);};if(latEl.value&&lonEl.value)setPin(lat,lon);map.on('click',e=>setPin(e.latlng.lat,e.latlng.lng));temoPinMaps[kind]={map,setPin,getMarker:()=>marker};setTimeout(()=>map.invalidateSize(),120);}
@@ -1811,10 +1811,18 @@ function makeTemoBotswanaMap(elementId,kind){
  const layer=L.layerGroup().addTo(map);temoDisplayMaps[kind]={map,layer};setTimeout(()=>map.invalidateSize(),120);return temoDisplayMaps[kind];
 }
 async function fetchTemoPublicMapPins(filter){
- const f=filter||'all';
- const a=f==='services'?{data:[],error:null}:await supabaseClient.from('listings').select('id,title,description,category,location,price,currency,latitude,longitude').eq('listing_status','published').eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500);
- const b=f==='products'?{data:[],error:null}:await supabaseClient.from('temo_service_offerings').select('id,title,description,service_type,service_area,latitude,longitude').eq('approval_status','approved').eq('available',true).eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500);
- return {products:a.data||[],services:b.data||[],error:a.error||b.error};
+ try{
+  if(!supabaseClient)return {products:[],services:[],error:new Error('The Supabase client did not load. Refresh the page and try again.')};
+  const f=filter||'all';
+  const requests=Promise.all([
+   f==='services'?Promise.resolve({data:[],error:null}):supabaseClient.from('listings').select('id,title,description,category,location,price,currency,latitude,longitude').eq('listing_status','published').eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500),
+   f==='products'?Promise.resolve({data:[],error:null}):supabaseClient.from('temo_service_offerings').select('id,title,description,service_type,service_area,latitude,longitude').eq('approval_status','approved').eq('available',true).eq('show_on_map',true).not('latitude','is',null).not('longitude','is',null).limit(500)
+  ]);
+  const result=await Promise.race([requests,new Promise(resolve=>setTimeout(()=>resolve({timeout:true}),12000))]);
+  if(result.timeout)return {products:[],services:[],error:new Error('The map data request timed out. Check your connection and refresh the map.')};
+  const [a,b]=result;
+  return {products:a.data||[],services:b.data||[],error:a.error||b.error};
+ }catch(error){console.warn('TEMO GeoMarket request failed:',error);return {products:[],services:[],error};}
 }
 function drawTemoMapPins(target,records){
  target.layer.clearLayers();let count=0;
