@@ -1804,7 +1804,10 @@ function clearMapPin(kind){const listing=kind==='listing',m=temoPinMaps[kind],la
 const temoDisplayMaps={};
 const TEMO_BOUNDS=[[-26.95,20.95],[-17.75,29.45]];
 function makeTemoBotswanaMap(elementId,kind){
- const el=document.getElementById(elementId);if(!el||!window.L)return null;
+ const el=document.getElementById(elementId);
+ if(!el)return null;
+ if(!window.L)throw new Error('The map library could not load. Check your internet connection or allow unpkg.com, then refresh.');
+
  if(temoDisplayMaps[kind]){setTimeout(()=>temoDisplayMaps[kind].map.invalidateSize(),100);return temoDisplayMaps[kind];}
  const map=L.map(el,{scrollWheelZoom:true,zoomControl:true,maxBounds:TEMO_BOUNDS,maxBoundsViscosity:0.85,minZoom:5,maxZoom:17}).setView([-22.3285,24.6849],6);
  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
@@ -1832,22 +1835,44 @@ function drawTemoMapPins(target,records){
 }
 async function loadOverviewMap(){
  const status=document.getElementById('overviewGeoStatus');if(!status)return;
- const target=makeTemoBotswanaMap('overviewGeoMap','overview');if(!target)return;
- status.textContent='Loading approved public pins across Botswana…';
- const records=await fetchTemoPublicMapPins('all');
- if(records.error){status.textContent='Map listings are temporarily unavailable. Please try again later.';console.warn(records.error);return;}
- const count=drawTemoMapPins(target,records);
- status.textContent=count?count+' approved public pin'+(count===1?'':'s')+' shown. Tap a pin for details.':'No public pins yet. Approved listings and services will appear when their owners choose to share a location.';
+ try{
+  status.textContent='Loading the Botswana map…';
+  const target=makeTemoBotswanaMap('overviewGeoMap','overview');
+  if(!target)throw new Error('The Overview map container is missing.');
+  status.textContent='Loading approved public pins across Botswana…';
+  const records=await fetchTemoPublicMapPins('all');
+  if(records.error){status.textContent='Map opened, but listings could not be loaded. '+(records.error.message||'Please refresh and try again.');console.warn(records.error);return;}
+  const count=drawTemoMapPins(target,records);
+  status.textContent=count?count+' approved public pin'+(count===1?'':'s')+' shown. Tap a pin for details.':'Map ready. No public pins yet; approved listings and services appear when owners choose to share a location.';
+ }catch(error){status.textContent='Map unavailable: '+(error.message||'Please refresh and try again.');console.error('TEMO Overview map:',error);}
 }
 async function loadGeoMarket(){
  const status=document.getElementById('geoMapStatus');if(!status)return;
- const target=makeTemoBotswanaMap('geoMap','geomarket');if(!target)return;
- status.textContent='Loading approved public pins across Botswana…';
- const filter=document.getElementById('geoFilter')?.value||'all';
- const records=await fetchTemoPublicMapPins(filter);
- if(records.error){status.textContent='Could not load map pins. Please refresh and try again.';console.warn(records.error);return;}
- const count=drawTemoMapPins(target,records);
- status.textContent=count?count+' public pins shown. Select a pin for details and directions.':'No public pins yet. Owners can add pins when creating listings or services.';
+ try{
+  status.textContent='Loading the Botswana map…';
+  const target=makeTemoBotswanaMap('geoMap','geomarket');
+  if(!target)throw new Error('The GeoMarket map container is missing.');
+  status.textContent='Loading approved public pins across Botswana…';
+  const filter=document.getElementById('geoFilter')?.value||'all';
+  const records=await fetchTemoPublicMapPins(filter);
+  if(records.error){status.textContent='Map opened, but listings could not be loaded. '+(records.error.message||'Please refresh and try again.');console.warn(records.error);return;}
+  const count=drawTemoMapPins(target,records);
+  status.textContent=count?count+' public pins shown. Select a pin for details and directions.':'Map ready. No public pins yet; owners can add pins when creating listings or services.';
+ }catch(error){status.textContent='Map unavailable: '+(error.message||'Please refresh and try again.');console.error('TEMO GeoMarket map:',error);}
+}
+
+/* Start the Overview map on the first page visit, not only after clicking Home. */
+function startTemoOverview(){
+ const home=document.getElementById('page-home');
+ if(home&&home.classList.contains('active')){
+  loadOverviewNews();
+  loadOverviewMap();
+ }
+}
+if(document.readyState==='loading'){
+ document.addEventListener('DOMContentLoaded',startTemoOverview,{once:true});
+}else{
+ startTemoOverview();
 }
 
 </script>
